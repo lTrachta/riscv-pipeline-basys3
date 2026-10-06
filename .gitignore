@@ -1,3 +1,6 @@
 
 # Vivado/XSim: archivos temporales de simulacion
 vivado/sim/
+xsim.dir/
+xvlog.log
+xvlog.pb
