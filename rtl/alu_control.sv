@@ -1,12 +1,20 @@
 `timescale 1ns / 1ps
 
 module alu_control (
-    input  logic [6:0] opcode,
+    // Control general generado por Control Unit en ID.
+    input  logic [2:0] alu_op,
+
+    // Campos necesarios para resolver operaciones R/I.
     input  logic [2:0] funct3,
     input  logic [6:0] funct7,
 
+    // Operación exacta enviada a la ALU.
     output logic [3:0] alu_operation
 );
+
+    // =========================================================
+    // OPERACIONES EXACTAS DE LA ALU
+    // =========================================================
 
     localparam logic [3:0] ALU_ADD     = 4'b0000;
     localparam logic [3:0] ALU_SUB     = 4'b0001;
@@ -21,24 +29,61 @@ module alu_control (
     localparam logic [3:0] ALU_PASS_B  = 4'b1010;
     localparam logic [3:0] ALU_INVALID = 4'b1111;
 
-    localparam logic [6:0] OPCODE_R       = 7'b0110011;
-    localparam logic [6:0] OPCODE_I_ALU   = 7'b0010011;
-    localparam logic [6:0] OPCODE_LOAD    = 7'b0000011;
-    localparam logic [6:0] OPCODE_STORE   = 7'b0100011;
-    localparam logic [6:0] OPCODE_BRANCH  = 7'b1100011;
-    localparam logic [6:0] OPCODE_LUI     = 7'b0110111;
-    localparam logic [6:0] OPCODE_JAL     = 7'b1101111;
-    localparam logic [6:0] OPCODE_JALR    = 7'b1100111;
+
+    // =========================================================
+    // ALU_OP GENERADO POR CONTROL UNIT
+    // =========================================================
+
+    localparam logic [2:0] ALU_OP_ADD      = 3'b000;
+    localparam logic [2:0] ALU_OP_SUB      = 3'b001;
+    localparam logic [2:0] ALU_OP_R_DECODE = 3'b010;
+    localparam logic [2:0] ALU_OP_I_DECODE = 3'b011;
+    localparam logic [2:0] ALU_OP_PASS_B   = 3'b100;
+
+
+    // =========================================================
+    // ALU CONTROL
+    // =========================================================
 
     always_comb begin
 
+        // Ante cualquier combinación no reconocida,
+        // la ALU queda en operación inválida.
         alu_operation = ALU_INVALID;
 
-        case (opcode)
+        case (alu_op)
 
-            OPCODE_R: begin
+            // -------------------------------------------------
+            // Operaciones que Main Control ya resolvió
+            // completamente.
+            // -------------------------------------------------
+
+            ALU_OP_ADD: begin
+                alu_operation = ALU_ADD;
+            end
+
+
+            ALU_OP_SUB: begin
+                alu_operation = ALU_SUB;
+            end
+
+
+            ALU_OP_PASS_B: begin
+                alu_operation = ALU_PASS_B;
+            end
+
+
+            // -------------------------------------------------
+            // R-TYPE
+            //
+            // La operación exacta depende de funct3/funct7.
+            // -------------------------------------------------
+
+            ALU_OP_R_DECODE: begin
+
                 case (funct3)
 
+                    // add / sub
                     3'b000: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_ADD;
@@ -46,26 +91,36 @@ module alu_control (
                             alu_operation = ALU_SUB;
                     end
 
+
+                    // sll
                     3'b001: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_SLL;
                     end
 
+
+                    // slt
                     3'b010: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_SLT;
                     end
 
+
+                    // sltu
                     3'b011: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_SLTU;
                     end
 
+
+                    // xor
                     3'b100: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_XOR;
                     end
 
+
+                    // srl / sra
                     3'b101: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_SRL;
@@ -73,49 +128,81 @@ module alu_control (
                             alu_operation = ALU_SRA;
                     end
 
+
+                    // or
                     3'b110: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_OR;
                     end
 
+
+                    // and
                     3'b111: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_AND;
                     end
+
 
                     default: begin
                         alu_operation = ALU_INVALID;
                     end
 
                 endcase
+
             end
 
-            OPCODE_I_ALU: begin
+
+            // -------------------------------------------------
+            // I-TYPE ALU
+            //
+            // Para operaciones inmediatas normales funct7 no
+            // tiene significado funcional.
+            //
+            // Para shifts sí es necesario.
+            // -------------------------------------------------
+
+            ALU_OP_I_DECODE: begin
+
                 case (funct3)
 
+                    // addi
                     3'b000:
                         alu_operation = ALU_ADD;
 
+
+                    // slti
                     3'b010:
                         alu_operation = ALU_SLT;
 
+
+                    // sltiu
                     3'b011:
                         alu_operation = ALU_SLTU;
 
+
+                    // xori
                     3'b100:
                         alu_operation = ALU_XOR;
 
+
+                    // ori
                     3'b110:
                         alu_operation = ALU_OR;
 
+
+                    // andi
                     3'b111:
                         alu_operation = ALU_AND;
 
+
+                    // slli
                     3'b001: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_SLL;
                     end
 
+
+                    // srli / srai
                     3'b101: begin
                         if (funct7 == 7'b0000000)
                             alu_operation = ALU_SRL;
@@ -123,35 +210,22 @@ module alu_control (
                             alu_operation = ALU_SRA;
                     end
 
+
                     default: begin
                         alu_operation = ALU_INVALID;
                     end
 
                 endcase
+
             end
 
-            OPCODE_LOAD:
-                alu_operation = ALU_ADD;
 
-            OPCODE_STORE:
-                alu_operation = ALU_ADD;
-
-            OPCODE_BRANCH:
-                alu_operation = ALU_SUB;
-
-            OPCODE_LUI:
-                alu_operation = ALU_PASS_B;
-
-            OPCODE_JAL:
-                alu_operation = ALU_ADD;
-
-            OPCODE_JALR:
-                alu_operation = ALU_ADD;
-
-            default:
+            default: begin
                 alu_operation = ALU_INVALID;
+            end
 
         endcase
+
     end
 
 endmodule

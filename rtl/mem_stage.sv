@@ -5,80 +5,109 @@ module mem_stage #(
 ) (
     input  logic        clk,
     input  logic        reset,
+
     input  logic        mem_enable,
     input  logic        flush_mem_wb,
 
-    // ---------------------------------------------------------
-    // Entrada desde EX/MEM
-    // ---------------------------------------------------------
+    // =========================================================
+    // DATAPATH DESDE EX/MEM
+    // =========================================================
 
     input  logic [31:0] ex_mem_pc,
     input  logic [31:0] ex_mem_alu_result,
     input  logic [31:0] ex_mem_store_data,
+
     input  logic [4:0]  ex_mem_rd,
+
+    // Opcode se conserva temporalmente.
     input  logic [6:0]  ex_mem_opcode,
+
+    // funct3 sigue siendo necesario para distinguir:
+    //
+    // LOAD:
+    // lb/lh/lw/lbu/lhu
+    //
+    // STORE:
+    // sb/sh/sw
     input  logic [2:0]  ex_mem_funct3,
+
     input  logic        ex_mem_valid,
 
-    // ---------------------------------------------------------
-    // Salida hacia MEM/WB
-    // ---------------------------------------------------------
+    // =========================================================
+    // CONTROL MEM DESDE EX/MEM
+    // =========================================================
+
+    input  logic        ex_mem_mem_read,
+    input  logic        ex_mem_mem_write,
+
+    // =========================================================
+    // CONTROL WB QUE DEBE CONTINUAR
+    // =========================================================
+
+    input  logic        ex_mem_reg_write,
+    input  logic [1:0]  ex_mem_wb_sel,
+
+    // =========================================================
+    // DATAPATH HACIA MEM/WB
+    // =========================================================
 
     output logic [31:0] mem_wb_pc,
     output logic [31:0] mem_wb_alu_result,
     output logic [31:0] mem_wb_load_data,
+
     output logic [4:0]  mem_wb_rd,
     output logic [6:0]  mem_wb_opcode,
-    output logic        mem_wb_valid
+
+    output logic        mem_wb_valid,
+
+    // =========================================================
+    // CONTROL WB HACIA MEM/WB
+    // =========================================================
+
+    output logic        mem_wb_reg_write,
+    output logic [1:0]  mem_wb_wb_sel
 );
 
-    // ---------------------------------------------------------
-    // Opcodes utilizados en MEM
-    // ---------------------------------------------------------
 
-    localparam logic [6:0] OPCODE_LOAD  = 7'b0000011;
-    localparam logic [6:0] OPCODE_STORE = 7'b0100011;
-
-
-    // ---------------------------------------------------------
-    // Clasificación de instrucción
-    // ---------------------------------------------------------
+    // =========================================================
+    // CLASIFICACIÓN DE LA OPERACIÓN DE MEMORIA
+    //
+    // Antes se reconstruía mirando opcode.
+    //
+    // Ahora la decisión ya llegó desde Control Unit:
+    //
+    // mem_read  = LOAD
+    // mem_write = STORE
+    // =========================================================
 
     logic is_load;
     logic is_store;
 
-    assign is_load  = (ex_mem_opcode == OPCODE_LOAD);
-    assign is_store = (ex_mem_opcode == OPCODE_STORE);
+    assign is_load  = ex_mem_mem_read;
+    assign is_store = ex_mem_mem_write;
 
 
-    // ---------------------------------------------------------
-    // Validez de funct3
+    // =========================================================
+    // VALIDEZ DE FUNCT3
     //
-    // LOAD:
-    //   000 -> lb
-    //   001 -> lh
-    //   010 -> lw
-    //   100 -> lbu
-    //   101 -> lhu
-    //
-    // STORE:
-    //   000 -> sb
-    //   001 -> sh
-    //   010 -> sw
-    // ---------------------------------------------------------
+    // Aunque Control Unit ya valida estas combinaciones,
+    // mantenemos estas comprobaciones como defensa local y
+    // para detectar accesos no soportados.
+    // =========================================================
 
     logic load_funct3_valid;
     logic store_funct3_valid;
+
 
     always_comb begin
 
         case (ex_mem_funct3)
 
-            3'b000,
-            3'b001,
-            3'b010,
-            3'b100,
-            3'b101:
+            3'b000,   // lb
+            3'b001,   // lh
+            3'b010,   // lw
+            3'b100,   // lbu
+            3'b101:   // lhu
                 load_funct3_valid = 1'b1;
 
             default:
@@ -93,9 +122,9 @@ module mem_stage #(
 
         case (ex_mem_funct3)
 
-            3'b000,
-            3'b001,
-            3'b010:
+            3'b000,   // sb
+            3'b001,   // sh
+            3'b010:   // sw
                 store_funct3_valid = 1'b1;
 
             default:
@@ -127,24 +156,22 @@ module mem_stage #(
 
 
     // =========================================================
-    // HABILITACIÓN REAL DE ESCRITURA EN DMEM
+    // WRITE ENABLE REAL DE DMEM
     //
-    // Un store solamente puede modificar memoria cuando:
+    // Ya NO depende de opcode.
     //
-    // - la instrucción es válida;
-    // - realmente es STORE;
-    // - MEM está habilitado;
-    // - no estamos en reset;
-    // - no estamos haciendo flush;
-    // - funct3 es soportado;
-    // - el acceso está alineado.
+    // ex_mem_mem_write llegó desde Control Unit a través de:
+    //
+    // ID/EX -> EX -> EX/MEM
     // =========================================================
 
     logic memory_write_enable;
 
+
     assign memory_write_enable =
         ex_mem_valid          &&
-        is_store              &&
+        ex_mem_mem_write      &&
+        !ex_mem_mem_read      &&
         mem_enable            &&
         !reset                &&
         !flush_mem_wb         &&
@@ -195,8 +222,7 @@ module mem_stage #(
     // =========================================================
     // DATO DE LOAD HACIA MEM/WB
     //
-    // Para instrucciones que no son LOAD, dejamos este campo
-    // en cero porque no tiene significado.
+    // Solamente tiene significado cuando MemRead = 1.
     // =========================================================
 
     logic [31:0] mem_wb_load_data_in;
@@ -205,11 +231,13 @@ module mem_stage #(
     always_comb begin
 
         if (
-            is_load              &&
-            load_funct3_valid    &&
+            ex_mem_mem_read     &&
+            !ex_mem_mem_write   &&
+            load_funct3_valid   &&
             !load_misaligned
         )
             mem_wb_load_data_in = load_data_formatted;
+
         else
             mem_wb_load_data_in = 32'd0;
 
@@ -219,10 +247,14 @@ module mem_stage #(
     // =========================================================
     // VALID HACIA MEM/WB
     //
-    // Una instrucción normal pasa su valid.
+    // Instrucciones sin acceso a memoria:
+    //     valid pasa normalmente.
     //
-    // Un load/store no soportado o desalineado se convierte
-    // en burbuja.
+    // LOAD/STORE:
+    //     además exigimos funct3 válido y alineación correcta.
+    //
+    // Si por algún error MemRead y MemWrite llegan activos a la
+    // vez, neutralizamos la instrucción.
     // =========================================================
 
     logic mem_wb_valid_in;
@@ -232,7 +264,12 @@ module mem_stage #(
 
         mem_wb_valid_in = ex_mem_valid;
 
-        if (is_load) begin
+        if (ex_mem_mem_read && ex_mem_mem_write) begin
+
+            mem_wb_valid_in = 1'b0;
+
+        end
+        else if (is_load) begin
 
             mem_wb_valid_in =
                 ex_mem_valid       &&
@@ -254,6 +291,16 @@ module mem_stage #(
 
     // =========================================================
     // MEM/WB PIPELINE REGISTER
+    //
+    // MEM ya consumió:
+    //
+    // - mem_read
+    // - mem_write
+    //
+    // Por lo tanto solamente continúan:
+    //
+    // - reg_write
+    // - wb_sel
     // =========================================================
 
     mem_wb_register mem_wb_reg (
@@ -262,19 +309,45 @@ module mem_stage #(
         .enable         (mem_enable),
         .flush          (flush_mem_wb),
 
+        // -----------------------------------------------------
+        // Datapath
+        // -----------------------------------------------------
+
         .pc_in          (ex_mem_pc),
         .alu_result_in  (ex_mem_alu_result),
         .load_data_in   (mem_wb_load_data_in),
+
         .rd_in          (ex_mem_rd),
         .opcode_in      (ex_mem_opcode),
+
         .valid_in       (mem_wb_valid_in),
+
+        // -----------------------------------------------------
+        // WB control
+        // -----------------------------------------------------
+
+        .reg_write_in   (ex_mem_reg_write),
+        .wb_sel_in      (ex_mem_wb_sel),
+
+        // -----------------------------------------------------
+        // Datapath outputs
+        // -----------------------------------------------------
 
         .pc_out         (mem_wb_pc),
         .alu_result_out (mem_wb_alu_result),
         .load_data_out  (mem_wb_load_data),
+
         .rd_out         (mem_wb_rd),
         .opcode_out     (mem_wb_opcode),
-        .valid_out      (mem_wb_valid)
+
+        .valid_out      (mem_wb_valid),
+
+        // -----------------------------------------------------
+        // WB control outputs
+        // -----------------------------------------------------
+
+        .reg_write_out  (mem_wb_reg_write),
+        .wb_sel_out     (mem_wb_wb_sel)
     );
 
 endmodule

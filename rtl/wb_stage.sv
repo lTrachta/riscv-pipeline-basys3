@@ -1,171 +1,101 @@
 `timescale 1ns / 1ps
 
 module wb_stage (
-    // ---------------------------------------------------------
-    // Entrada desde MEM/WB
-    // ---------------------------------------------------------
+    // =========================================================
+    // DATAPATH DESDE MEM/WB
+    // =========================================================
 
     input  logic [31:0] mem_wb_pc,
     input  logic [31:0] mem_wb_alu_result,
     input  logic [31:0] mem_wb_load_data,
+
     input  logic [4:0]  mem_wb_rd,
+
+    // Se conserva temporalmente para compatibilidad/debug.
+    // WB ya NO lo utiliza para tomar decisiones.
     input  logic [6:0]  mem_wb_opcode,
+
     input  logic        mem_wb_valid,
 
-    // ---------------------------------------------------------
-    // Salida hacia Register File
-    // ---------------------------------------------------------
+    // =========================================================
+    // CONTROL WB DESDE MEM/WB
+    // =========================================================
+
+    input  logic        mem_wb_reg_write,
+    input  logic [1:0]  mem_wb_wb_sel,
+
+    // =========================================================
+    // SALIDA HACIA REGISTER FILE
+    // =========================================================
 
     output logic        wb_write_enable,
     output logic [4:0]  wb_write_register,
     output logic [31:0] wb_write_data
 );
 
-    // ---------------------------------------------------------
-    // Opcodes utilizados por el subconjunto implementado
-    // ---------------------------------------------------------
 
-    localparam logic [6:0] OPCODE_R      = 7'b0110011;
-    localparam logic [6:0] OPCODE_I_ALU  = 7'b0010011;
-    localparam logic [6:0] OPCODE_LOAD   = 7'b0000011;
-    localparam logic [6:0] OPCODE_STORE  = 7'b0100011;
-    localparam logic [6:0] OPCODE_BRANCH = 7'b1100011;
-    localparam logic [6:0] OPCODE_LUI    = 7'b0110111;
-    localparam logic [6:0] OPCODE_JAL    = 7'b1101111;
-    localparam logic [6:0] OPCODE_JALR   = 7'b1100111;
+    // =========================================================
+    // WRITE-BACK SELECT
+    //
+    // Estas codificaciones fueron generadas originalmente
+    // por Control Unit en ID.
+    // =========================================================
 
-
-    // ---------------------------------------------------------
-    // Selección interna de fuente de write-back
-    // ---------------------------------------------------------
-
-    localparam logic [1:0] WB_SEL_ALU  = 2'b00;
-    localparam logic [1:0] WB_SEL_LOAD = 2'b01;
-    localparam logic [1:0] WB_SEL_PC4  = 2'b10;
-
-    logic [1:0] wb_sel;
-    logic       writes_register;
-
-    logic [31:0] pc_plus_4;
+    localparam logic [1:0] WB_SEL_ALU = 2'b00;
+    localparam logic [1:0] WB_SEL_MEM = 2'b01;
+    localparam logic [1:0] WB_SEL_PC4 = 2'b10;
 
 
-    // ---------------------------------------------------------
+    // =========================================================
     // PC + 4
     //
-    // Se utiliza como link value para JAL y JALR.
-    // ---------------------------------------------------------
+    // Valor de link utilizado por JAL/JALR.
+    // =========================================================
+
+    logic [31:0] pc_plus_4;
 
     assign pc_plus_4 = mem_wb_pc + 32'd4;
 
 
-    // ---------------------------------------------------------
-    // Decodificación de write-back
+    // =========================================================
+    // VALIDEZ DE LA SELECCIÓN WB
     //
-    // Determina:
-    // - si la instrucción escribe un registro;
-    // - qué fuente debe seleccionarse.
-    // ---------------------------------------------------------
+    // 11 está reservado.
+    // =========================================================
+
+    logic wb_select_valid;
+
+
+    // =========================================================
+    // MULTIPLEXOR DE WRITE-BACK
+    //
+    // WB ya no mira opcode.
+    //
+    // Simplemente obedece wb_sel.
+    // =========================================================
 
     always_comb begin
 
-        writes_register = 1'b0;
-        wb_sel           = WB_SEL_ALU;
+        wb_write_data   = 32'd0;
+        wb_select_valid = 1'b1;
 
-        case (mem_wb_opcode)
+        case (mem_wb_wb_sel)
 
-            // =================================================
-            // Operaciones R-type
-            // add, sub, sll, srl, sra, and, or, xor, slt, sltu
-            // =================================================
-
-            OPCODE_R: begin
-                writes_register = 1'b1;
-                wb_sel           = WB_SEL_ALU;
+            WB_SEL_ALU: begin
+                wb_write_data = mem_wb_alu_result;
             end
 
-
-            // =================================================
-            // Operaciones I-type de ALU
-            // addi, andi, ori, xori, slti, sltiu,
-            // slli, srli, srai
-            // =================================================
-
-            OPCODE_I_ALU: begin
-                writes_register = 1'b1;
-                wb_sel           = WB_SEL_ALU;
+            WB_SEL_MEM: begin
+                wb_write_data = mem_wb_load_data;
             end
 
-
-            // =================================================
-            // Loads
-            // lb, lh, lw, lbu, lhu
-            // =================================================
-
-            OPCODE_LOAD: begin
-                writes_register = 1'b1;
-                wb_sel           = WB_SEL_LOAD;
+            WB_SEL_PC4: begin
+                wb_write_data = pc_plus_4;
             end
-
-
-            // =================================================
-            // LUI
-            //
-            // En nuestro datapath LUI ya produjo su resultado
-            // mediante ALU_PASS_B en EX.
-            // =================================================
-
-            OPCODE_LUI: begin
-                writes_register = 1'b1;
-                wb_sel           = WB_SEL_ALU;
-            end
-
-
-            // =================================================
-            // JAL
-            //
-            // rd <- PC + 4
-            // =================================================
-
-            OPCODE_JAL: begin
-                writes_register = 1'b1;
-                wb_sel           = WB_SEL_PC4;
-            end
-
-
-            // =================================================
-            // JALR
-            //
-            // rd <- PC + 4
-            // =================================================
-
-            OPCODE_JALR: begin
-                writes_register = 1'b1;
-                wb_sel           = WB_SEL_PC4;
-            end
-
-
-            // =================================================
-            // Stores y branches no escriben Register File.
-            // =================================================
-
-            OPCODE_STORE: begin
-                writes_register = 1'b0;
-                wb_sel           = WB_SEL_ALU;
-            end
-
-            OPCODE_BRANCH: begin
-                writes_register = 1'b0;
-                wb_sel           = WB_SEL_ALU;
-            end
-
-
-            // =================================================
-            // Opcode no soportado
-            // =================================================
 
             default: begin
-                writes_register = 1'b0;
-                wb_sel           = WB_SEL_ALU;
+                wb_write_data   = 32'd0;
+                wb_select_valid = 1'b0;
             end
 
         endcase
@@ -173,50 +103,29 @@ module wb_stage (
     end
 
 
-    // ---------------------------------------------------------
-    // Multiplexor de dato de write-back
-    // ---------------------------------------------------------
-
-    always_comb begin
-
-        case (wb_sel)
-
-            WB_SEL_ALU:
-                wb_write_data = mem_wb_alu_result;
-
-            WB_SEL_LOAD:
-                wb_write_data = mem_wb_load_data;
-
-            WB_SEL_PC4:
-                wb_write_data = pc_plus_4;
-
-            default:
-                wb_write_data = 32'd0;
-
-        endcase
-
-    end
-
-
-    // ---------------------------------------------------------
-    // Registro destino
-    // ---------------------------------------------------------
+    // =========================================================
+    // REGISTRO DESTINO
+    // =========================================================
 
     assign wb_write_register = mem_wb_rd;
 
 
-    // ---------------------------------------------------------
-    // Habilitación final de escritura
+    // =========================================================
+    // WRITE ENABLE FINAL
     //
-    // Solo escribimos cuando:
-    // - la entrada MEM/WB es válida;
-    // - la instrucción escribe registro;
+    // Se escribe Register File solamente cuando:
+    //
+    // - MEM/WB contiene una instrucción válida;
+    // - Control Unit indicó RegWrite;
+    // - wb_sel es válido;
     // - rd no es x0.
-    // ---------------------------------------------------------
+    // =========================================================
 
     assign wb_write_enable =
         mem_wb_valid       &&
-        writes_register    &&
+        mem_wb_reg_write   &&
+        wb_select_valid    &&
         (mem_wb_rd != 5'd0);
+
 
 endmodule
