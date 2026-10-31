@@ -110,6 +110,7 @@ module pipeline_core (
     // =========================================================
 
     // EX control
+
     logic       id_ex_alu_src_a;
     logic       id_ex_alu_src_b;
     logic [2:0] id_ex_alu_op;
@@ -118,10 +119,12 @@ module pipeline_core (
     logic [1:0] id_ex_jump_type;
 
     // MEM control
+
     logic id_ex_mem_read;
     logic id_ex_mem_write;
 
     // WB control
+
     logic       id_ex_reg_write;
     logic [1:0] id_ex_wb_sel;
 
@@ -242,89 +245,125 @@ module pipeline_core (
 
 
     // =========================================================
+    // FORWARDING
+    //
+    // ForwardA y ForwardB seleccionan qué versión de rs1/rs2
+    // debe utilizar la instrucción actualmente en EX.
+    //
+    // 00 -> ID/EX
+    // 01 -> MEM/WB
+    // 10 -> EX/MEM
+    // =========================================================
+
+    logic [1:0] forward_a;
+    logic [1:0] forward_b;
+
+    logic ex_mem_forward_reg_write;
+    logic mem_wb_forward_reg_write;
+
+
+    // =========================================================
     // EX STAGE
     // =========================================================
 
     ex_stage ex_stage_inst (
-        .clk                 (clk),
-        .reset               (reset),
+        .clk                  (clk),
+        .reset                (reset),
 
-        .ex_enable           (ex_enable),
-        .flush_ex_mem        (flush_ex_mem),
+        .ex_enable            (ex_enable),
+        .flush_ex_mem         (flush_ex_mem),
 
         // -----------------------------------------------------
         // EX control
         // -----------------------------------------------------
 
-        .id_ex_alu_src_a     (id_ex_alu_src_a),
-        .id_ex_alu_src_b     (id_ex_alu_src_b),
-        .id_ex_alu_op        (id_ex_alu_op),
+        .id_ex_alu_src_a      (id_ex_alu_src_a),
+        .id_ex_alu_src_b      (id_ex_alu_src_b),
+        .id_ex_alu_op         (id_ex_alu_op),
 
-        .id_ex_branch        (id_ex_branch),
-        .id_ex_jump_type     (id_ex_jump_type),
+        .id_ex_branch         (id_ex_branch),
+        .id_ex_jump_type      (id_ex_jump_type),
 
         // -----------------------------------------------------
         // MEM control que debe continuar
         // -----------------------------------------------------
 
-        .id_ex_mem_read      (id_ex_mem_read),
-        .id_ex_mem_write     (id_ex_mem_write),
+        .id_ex_mem_read       (id_ex_mem_read),
+        .id_ex_mem_write      (id_ex_mem_write),
 
         // -----------------------------------------------------
         // WB control que debe continuar
         // -----------------------------------------------------
 
-        .id_ex_reg_write     (id_ex_reg_write),
-        .id_ex_wb_sel        (id_ex_wb_sel),
+        .id_ex_reg_write      (id_ex_reg_write),
+        .id_ex_wb_sel         (id_ex_wb_sel),
 
         // -----------------------------------------------------
         // Datapath ID/EX
         // -----------------------------------------------------
 
-        .id_ex_pc            (id_ex_pc),
+        .id_ex_pc             (id_ex_pc),
 
-        .id_ex_read_data1    (id_ex_read_data1),
-        .id_ex_read_data2    (id_ex_read_data2),
+        .id_ex_read_data1     (id_ex_read_data1),
+        .id_ex_read_data2     (id_ex_read_data2),
 
-        .id_ex_immediate     (id_ex_immediate),
+        .id_ex_immediate      (id_ex_immediate),
 
-        .id_ex_rd            (id_ex_rd),
+        .id_ex_rd             (id_ex_rd),
 
-        .id_ex_opcode        (id_ex_opcode),
-        .id_ex_funct3        (id_ex_funct3),
-        .id_ex_funct7        (id_ex_funct7),
+        .id_ex_opcode         (id_ex_opcode),
+        .id_ex_funct3         (id_ex_funct3),
+        .id_ex_funct7         (id_ex_funct7),
 
-        .id_ex_valid         (id_ex_valid),
+        .id_ex_valid          (id_ex_valid),
+
+        // -----------------------------------------------------
+        // Forwarding
+        //
+        // EX/MEM:
+        // resultado ALU de la instrucción inmediatamente
+        // anterior.
+        //
+        // MEM/WB:
+        // wb_write_data ya contiene el valor final seleccionado
+        // entre ALU, memoria o PC+4.
+        // -----------------------------------------------------
+
+        .forward_a            (forward_a),
+        .forward_b            (forward_b),
+
+        .ex_mem_forward_value (ex_mem_alu_result),
+        .mem_wb_forward_value (wb_write_data),
 
         // -----------------------------------------------------
         // Datapath EX/MEM
         // -----------------------------------------------------
 
-        .ex_mem_pc           (ex_mem_pc),
+        .ex_mem_pc            (ex_mem_pc),
 
-        .ex_mem_alu_result   (ex_mem_alu_result),
-        .ex_mem_store_data   (ex_mem_store_data),
+        .ex_mem_alu_result    (ex_mem_alu_result),
+        .ex_mem_store_data    (ex_mem_store_data),
 
-        .ex_mem_rd           (ex_mem_rd),
+        .ex_mem_rd            (ex_mem_rd),
 
-        .ex_mem_opcode       (ex_mem_opcode),
-        .ex_mem_funct3       (ex_mem_funct3),
+        .ex_mem_opcode        (ex_mem_opcode),
+        .ex_mem_funct3        (ex_mem_funct3),
 
-        .ex_mem_valid        (ex_mem_valid),
+        .ex_mem_valid         (ex_mem_valid),
 
         // -----------------------------------------------------
         // MEM control
         // -----------------------------------------------------
 
-        .ex_mem_mem_read     (ex_mem_mem_read),
-        .ex_mem_mem_write    (ex_mem_mem_write),
+        .ex_mem_mem_read      (ex_mem_mem_read),
+        .ex_mem_mem_write     (ex_mem_mem_write),
 
         // -----------------------------------------------------
         // WB control
         // -----------------------------------------------------
 
-        .ex_mem_reg_write    (ex_mem_reg_write),
-        .ex_mem_wb_sel       (ex_mem_wb_sel)
+        .ex_mem_reg_write     (ex_mem_reg_write),
+        .ex_mem_wb_sel        (ex_mem_wb_sel)
     );
 
 
@@ -423,14 +462,13 @@ module pipeline_core (
     // =========================================================
     // WRITE BACK
     //
-    // WB ya NO decodifica opcode.
-    //
-    // Consume exclusivamente:
+    // WB consume:
     //
     // - RegWrite
     // - WBSel
     //
-    // junto con valid y rd.
+    // wb_write_data también se reutiliza como fuente de
+    // forwarding MEM/WB -> EX.
     // =========================================================
 
     wb_stage wb_stage_inst (
@@ -452,6 +490,78 @@ module pipeline_core (
         .wb_write_enable       (wb_write_enable),
         .wb_write_register     (wb_write_register),
         .wb_write_data         (wb_write_data)
+    );
+
+
+    // =========================================================
+    // PRODUCTORES VÁLIDOS PARA FORWARDING
+    // =========================================================
+
+    // ---------------------------------------------------------
+    // EX/MEM
+    //
+    // Solamente se permite forwarding si:
+    //
+    // - la instrucción es válida;
+    // - escribe Register File;
+    // - NO es un load.
+    //
+    // Para un load:
+    //
+    // EX/MEM.alu_result = dirección efectiva
+    //
+    // todavía NO contiene el dato cargado.
+    //
+    // El load-use hazard será tratado mediante stall en el
+    // siguiente paso.
+    // ---------------------------------------------------------
+
+    assign ex_mem_forward_reg_write =
+        ex_mem_valid      &&
+        ex_mem_reg_write  &&
+        !ex_mem_mem_read;
+
+
+    // ---------------------------------------------------------
+    // MEM/WB
+    //
+    // En MEM/WB el valor final ya está disponible.
+    // ---------------------------------------------------------
+
+    assign mem_wb_forward_reg_write =
+        mem_wb_valid      &&
+        mem_wb_reg_write;
+
+
+    // =========================================================
+    // FORWARDING UNIT
+    //
+    // Compara:
+    //
+    // ID/EX.rs1 / rs2
+    //
+    // contra:
+    //
+    // EX/MEM.rd
+    // MEM/WB.rd
+    //
+    // Prioridad:
+    //
+    // EX/MEM > MEM/WB > ID/EX
+    // =========================================================
+
+    forwarding_unit forwarding_unit_inst (
+        .id_ex_rs1        (id_ex_rs1),
+        .id_ex_rs2        (id_ex_rs2),
+
+        .ex_mem_rd        (ex_mem_rd),
+        .ex_mem_reg_write (ex_mem_forward_reg_write),
+
+        .mem_wb_rd        (mem_wb_rd),
+        .mem_wb_reg_write (mem_wb_forward_reg_write),
+
+        .forward_a        (forward_a),
+        .forward_b        (forward_b)
     );
 
 endmodule

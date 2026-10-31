@@ -52,6 +52,23 @@ module ex_stage (
     input  logic        id_ex_valid,
 
     // =========================================================
+    // FORWARDING
+    //
+    // forward_a / forward_b:
+    //
+    // 00 -> valor original almacenado en ID/EX
+    // 01 -> valor proveniente de MEM/WB
+    // 10 -> valor proveniente de EX/MEM
+    // 11 -> reservado
+    // =========================================================
+
+    input  logic [1:0]  forward_a,
+    input  logic [1:0]  forward_b,
+
+    input  logic [31:0] ex_mem_forward_value,
+    input  logic [31:0] mem_wb_forward_value,
+
+    // =========================================================
     // DATOS HACIA MEM
     // =========================================================
 
@@ -83,7 +100,24 @@ module ex_stage (
 
 
     // =========================================================
-    // OPERANDOS DE ALU
+    // CODIFICACIÓN DE FORWARDING
+    // =========================================================
+
+    localparam logic [1:0] FORWARD_ID_EX  = 2'b00;
+    localparam logic [1:0] FORWARD_MEM_WB = 2'b01;
+    localparam logic [1:0] FORWARD_EX_MEM = 2'b10;
+
+
+    // =========================================================
+    // VALORES DE REGISTRO DESPUÉS DE FORWARDING
+    // =========================================================
+
+    logic [31:0] forwarded_rs1;
+    logic [31:0] forwarded_rs2;
+
+
+    // =========================================================
+    // OPERANDOS FINALES DE ALU
     // =========================================================
 
     logic [31:0] operand_a;
@@ -100,12 +134,99 @@ module ex_stage (
 
 
     // =========================================================
+    // FORWARDING DE rs1
+    //
+    // Determina cuál es la versión más actual del registro rs1.
+    //
+    // 00 -> valor leído originalmente del Register File
+    // 01 -> valor que se encuentra en MEM/WB
+    // 10 -> valor que se encuentra en EX/MEM
+    //
+    // La prioridad EX/MEM > MEM/WB ya fue resuelta por la
+    // Forwarding Unit.
+    // =========================================================
+
+    always_comb begin
+
+        case (forward_a)
+
+            FORWARD_ID_EX: begin
+                forwarded_rs1 = id_ex_read_data1;
+            end
+
+            FORWARD_MEM_WB: begin
+                forwarded_rs1 = mem_wb_forward_value;
+            end
+
+            FORWARD_EX_MEM: begin
+                forwarded_rs1 = ex_mem_forward_value;
+            end
+
+            default: begin
+                forwarded_rs1 = id_ex_read_data1;
+            end
+
+        endcase
+
+    end
+
+
+    // =========================================================
+    // FORWARDING DE rs2
+    //
+    // El resultado forwarded_rs2 se utiliza para dos posibles
+    // propósitos:
+    //
+    // 1. Operando B de ALU, cuando alu_src_b = 0.
+    //
+    // 2. store_data, independientemente de alu_src_b.
+    //
+    // Esto es fundamental para instrucciones store.
+    // =========================================================
+
+    always_comb begin
+
+        case (forward_b)
+
+            FORWARD_ID_EX: begin
+                forwarded_rs2 = id_ex_read_data2;
+            end
+
+            FORWARD_MEM_WB: begin
+                forwarded_rs2 = mem_wb_forward_value;
+            end
+
+            FORWARD_EX_MEM: begin
+                forwarded_rs2 = ex_mem_forward_value;
+            end
+
+            default: begin
+                forwarded_rs2 = id_ex_read_data2;
+            end
+
+        endcase
+
+    end
+
+
+    // =========================================================
     // SELECCIÓN DE OPERANDO A
     //
     // id_ex_alu_src_a:
     //
-    // 0 -> rs1
+    // 0 -> rs1 corregido mediante forwarding
     // 1 -> PC
+    //
+    // Ejemplos:
+    //
+    // R/I/load/store/jalr:
+    //      normalmente usan rs1.
+    //
+    // JAL:
+    //      usa PC.
+    //
+    // Si se selecciona PC, ForwardA no modifica la entrada
+    // final de la ALU.
     // =========================================================
 
     always_comb begin
@@ -113,7 +234,7 @@ module ex_stage (
         if (id_ex_alu_src_a)
             operand_a = id_ex_pc;
         else
-            operand_a = id_ex_read_data1;
+            operand_a = forwarded_rs1;
 
     end
 
@@ -123,8 +244,27 @@ module ex_stage (
     //
     // id_ex_alu_src_b:
     //
-    // 0 -> rs2
+    // 0 -> rs2 corregido mediante forwarding
     // 1 -> immediate
+    //
+    // IMPORTANTE:
+    //
+    // ForwardB determina cuál es la versión correcta de rs2.
+    //
+    // alu_src_b determina si la ALU realmente utiliza rs2
+    // o utiliza el inmediato.
+    //
+    // Por ejemplo:
+    //
+    // add:
+    //      B = forwarded_rs2
+    //
+    // addi:
+    //      B = immediate
+    //
+    // sw:
+    //      B = immediate para calcular la dirección,
+    //      pero forwarded_rs2 sigue usándose como store_data.
     // =========================================================
 
     always_comb begin
@@ -132,7 +272,7 @@ module ex_stage (
         if (id_ex_alu_src_b)
             operand_b = id_ex_immediate;
         else
-            operand_b = id_ex_read_data2;
+            operand_b = forwarded_rs2;
 
     end
 
@@ -140,10 +280,13 @@ module ex_stage (
     // =========================================================
     // ALU CONTROL
     //
-    // Ya NO vuelve a mirar opcode.
+    // La Control Unit ya generó alu_op en ID.
     //
-    // Recibe alu_op generado originalmente por Control Unit
-    // en ID y transportado por ID/EX.
+    // ALU Control solamente convierte:
+    //
+    // alu_op + funct3 + funct7
+    //
+    // en la operación exacta de ALU.
     // =========================================================
 
     alu_control alu_control_unit (
@@ -173,32 +316,38 @@ module ex_stage (
     // =========================================================
     // BRANCH / JUMP
     //
-    // id_ex_branch e id_ex_jump_type ya llegan correctamente
+    // id_ex_branch e id_ex_jump_type llegan correctamente
     // hasta EX.
     //
-    // Todavía no se utilizan para modificar el PC.
-    // La resolución completa de control hazards se realizará
-    // posteriormente.
+    // Gracias al forwarding, cuando posteriormente se implemente
+    // la resolución de branch, los valores de rs1/rs2 utilizados
+    // en EX podrán ser los valores actualizados.
+    //
+    // La modificación real del PC y los flushes quedan para el
+    // paso de control hazards.
     // =========================================================
 
 
     // =========================================================
     // EX/MEM PIPELINE REGISTER
     //
-    // EX ya consumió:
+    // EX ya consume:
     //
     // - alu_src_a
     // - alu_src_b
     // - alu_op
     // - branch
     // - jump_type
+    // - ForwardA
+    // - ForwardB
     //
-    // Por lo tanto EX/MEM solamente conserva:
+    // EX/MEM conserva:
     //
+    // - resultado de ALU
+    // - dato de store ya corregido
     // - controles MEM
     // - controles WB
-    //
-    // además de los datos necesarios.
+    // - demás información necesaria
     // =========================================================
 
     ex_mem_register ex_mem_reg (
@@ -215,12 +364,31 @@ module ex_stage (
 
         .alu_result_in   (alu_result),
 
-        // IMPORTANTE:
-        // El dato del store sigue siendo siempre rs2 original,
-        // no operand_b.
+        // -----------------------------------------------------
+        // STORE DATA
         //
-        // Para un store operand_b contiene el inmediato.
-        .store_data_in   (id_ex_read_data2),
+        // IMPORTANTE:
+        //
+        // Antes:
+        //
+        // store_data_in = id_ex_read_data2
+        //
+        // Ahora:
+        //
+        // store_data_in = forwarded_rs2
+        //
+        // Esto permite resolver:
+        //
+        // add x5, ...
+        // sw  x5, 0(x3)
+        //
+        // sin esperar a que x5 llegue primero al Register File.
+        //
+        // El store sigue utilizando el inmediato como operand_b
+        // de ALU para calcular la dirección.
+        // -----------------------------------------------------
+
+        .store_data_in   (forwarded_rs2),
 
         .rd_in           (id_ex_rd),
 
