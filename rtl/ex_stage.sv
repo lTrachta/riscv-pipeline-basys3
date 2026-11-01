@@ -43,6 +43,7 @@ module ex_stage (
 
     input  logic [31:0] id_ex_immediate,
 
+    input  logic [4:0]  id_ex_rs2,
     input  logic [4:0]  id_ex_rd,
 
     input  logic [6:0]  id_ex_opcode,
@@ -76,6 +77,7 @@ module ex_stage (
     output logic [31:0] ex_mem_alu_result,
     output logic [31:0] ex_mem_store_data,
 
+    output logic [4:0]  ex_mem_rs2,
     output logic [4:0]  ex_mem_rd,
 
     output logic [6:0]  ex_mem_opcode,
@@ -390,6 +392,7 @@ module ex_stage (
 
         .store_data_in   (forwarded_rs2),
 
+        .rs2_in          (id_ex_rs2),
         .rd_in           (id_ex_rd),
 
         .opcode_in       (id_ex_opcode),
@@ -419,6 +422,7 @@ module ex_stage (
         .alu_result_out  (ex_mem_alu_result),
         .store_data_out  (ex_mem_store_data),
 
+        .rs2_out         (ex_mem_rs2),
         .rd_out          (ex_mem_rd),
 
         .opcode_out      (ex_mem_opcode),

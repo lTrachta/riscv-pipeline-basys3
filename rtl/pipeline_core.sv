@@ -8,13 +8,14 @@ module pipeline_core (
     // =========================================================
     // CONTROL GENERAL DEL PIPELINE
     //
-    // Todavía:
-    // - todas las etapas avanzan;
-    // - no hay stalls automáticos;
-    // - no hay redirects reales;
-    // - no hay flushes por hazards de control.
+    // Actualmente:
     //
-    // Estas funcionalidades se implementarán posteriormente.
+    // - existe detección automática de load-use hazards;
+    // - PC e IF/ID pueden congelarse por stall;
+    // - ID/EX puede recibir una burbuja;
+    // - forwarding de datos está implementado;
+    // - todavía no hay redirects reales;
+    // - todavía no hay flushes por hazards de control.
     // =========================================================
 
     logic if_enable;
@@ -30,14 +31,35 @@ module pipeline_core (
     logic        redirect_valid;
     logic [31:0] redirect_target;
 
+    logic load_use_stall;
 
-    assign if_enable  = 1'b1;
-    assign id_enable  = 1'b1;
+
+    // =========================================================
+    // CONTROL DE STALL LOAD-USE
+    //
+    // Si hay hazard:
+    //
+    // PC / IF-ID -> HOLD
+    // ID/EX      -> BUBBLE
+    //
+    // EX/MEM y MEM/WB continúan normalmente.
+    // =========================================================
+
+    assign if_enable = !load_use_stall;
+
+    // ID/EX NO se congela.
+    // Necesitamos permitir que flush inserte la burbuja.
+    assign id_enable = 1'b1;
+
     assign ex_enable  = 1'b1;
     assign mem_enable = 1'b1;
 
-    assign flush_if_id  = 1'b0;
-    assign flush_id_ex  = 1'b0;
+
+    assign flush_if_id = 1'b0;
+
+    // Stall load-use -> burbuja en ID/EX.
+    assign flush_id_ex = load_use_stall;
+
     assign flush_ex_mem = 1'b0;
     assign flush_mem_wb = 1'b0;
 
@@ -131,6 +153,12 @@ module pipeline_core (
 
     // =========================================================
     // WB -> REGISTER FILE
+    //
+    // Estas mismas señales también se reutilizan para:
+    //
+    // - forwarding MEM/WB -> EX;
+    // - bypass WB -> ID dentro del Register File;
+    // - forwarding WB -> store-data en MEM.
     // =========================================================
 
     logic        wb_write_enable;
@@ -211,6 +239,38 @@ module pipeline_core (
 
 
     // =========================================================
+    // HAZARD DETECTION UNIT
+    //
+    // Detecta load-use hazards cuyo dato se necesita en EX
+    // durante el ciclo siguiente.
+    //
+    // Importante:
+    //
+    // STORE.rs1:
+    //     se necesita en EX para calcular la dirección
+    //     -> puede provocar stall.
+    //
+    // STORE.rs2:
+    //     se necesita recién en MEM como dato
+    //     -> NO provoca stall.
+    //
+    // Este último caso se resuelve mediante WB -> MEM
+    // store-data forwarding.
+    // =========================================================
+
+    hazard_detection_unit hazard_detection_unit_inst (
+        .if_id_instruction (if_id_instruction),
+        .if_id_valid       (if_id_valid),
+
+        .id_ex_valid       (id_ex_valid),
+        .id_ex_mem_read    (id_ex_mem_read),
+        .id_ex_rd          (id_ex_rd),
+
+        .stall             (load_use_stall)
+    );
+
+
+    // =========================================================
     // EX / MEM DATAPATH
     // =========================================================
 
@@ -218,6 +278,10 @@ module pipeline_core (
 
     logic [31:0] ex_mem_alu_result;
     logic [31:0] ex_mem_store_data;
+
+    // rs2 debe conservarse hasta MEM para poder comparar
+    // el registro fuente del store con el rd de WB.
+    logic [4:0] ex_mem_rs2;
 
     logic [4:0] ex_mem_rd;
 
@@ -245,7 +309,7 @@ module pipeline_core (
 
 
     // =========================================================
-    // FORWARDING
+    // FORWARDING HACIA EX
     //
     // ForwardA y ForwardB seleccionan qué versión de rs1/rs2
     // debe utilizar la instrucción actualmente en EX.
@@ -309,6 +373,10 @@ module pipeline_core (
 
         .id_ex_immediate      (id_ex_immediate),
 
+        // rs2 se necesita también como identificador,
+        // no solamente como valor.
+        .id_ex_rs2            (id_ex_rs2),
+
         .id_ex_rd             (id_ex_rd),
 
         .id_ex_opcode         (id_ex_opcode),
@@ -318,14 +386,14 @@ module pipeline_core (
         .id_ex_valid          (id_ex_valid),
 
         // -----------------------------------------------------
-        // Forwarding
+        // Forwarding hacia EX
         //
         // EX/MEM:
         // resultado ALU de la instrucción inmediatamente
         // anterior.
         //
         // MEM/WB:
-        // wb_write_data ya contiene el valor final seleccionado
+        // wb_write_data contiene el valor final seleccionado
         // entre ALU, memoria o PC+4.
         // -----------------------------------------------------
 
@@ -343,6 +411,9 @@ module pipeline_core (
 
         .ex_mem_alu_result    (ex_mem_alu_result),
         .ex_mem_store_data    (ex_mem_store_data),
+
+        // Identidad del registro fuente del store.
+        .ex_mem_rs2           (ex_mem_rs2),
 
         .ex_mem_rd            (ex_mem_rd),
 
@@ -397,6 +468,24 @@ module pipeline_core (
 
     // =========================================================
     // MEM STAGE
+    //
+    // Además del acceso normal a memoria, MEM puede corregir
+    // el dato de un store mediante WB -> MEM forwarding.
+    //
+    // Ejemplo:
+    //
+    // lw x5,0(x1)
+    // sw x5,0(x2)
+    //
+    // Cuando sw está en MEM:
+    //
+    // WB contiene el valor cargado para x5.
+    //
+    // Si:
+    //
+    // wb_write_register == ex_mem_rs2
+    //
+    // se utiliza wb_write_data como dato del store.
     // =========================================================
 
     mem_stage mem_stage_inst (
@@ -414,6 +503,9 @@ module pipeline_core (
 
         .ex_mem_alu_result   (ex_mem_alu_result),
         .ex_mem_store_data   (ex_mem_store_data),
+
+        // rs2 original del store.
+        .ex_mem_rs2          (ex_mem_rs2),
 
         .ex_mem_rd           (ex_mem_rd),
 
@@ -435,6 +527,17 @@ module pipeline_core (
 
         .ex_mem_reg_write    (ex_mem_reg_write),
         .ex_mem_wb_sel       (ex_mem_wb_sel),
+
+        // -----------------------------------------------------
+        // WB -> MEM STORE-DATA FORWARDING
+        //
+        // Estas señales ya representan el valor final de la
+        // instrucción actualmente en WB.
+        // -----------------------------------------------------
+
+        .wb_write_enable     (wb_write_enable),
+        .wb_write_register   (wb_write_register),
+        .wb_write_data       (wb_write_data),
 
         // -----------------------------------------------------
         // Datapath MEM/WB
@@ -467,8 +570,12 @@ module pipeline_core (
     // - RegWrite
     // - WBSel
     //
-    // wb_write_data también se reutiliza como fuente de
-    // forwarding MEM/WB -> EX.
+    // wb_write_data se reutiliza como:
+    //
+    // - dato para el Register File;
+    // - forwarding MEM/WB -> EX;
+    // - bypass WB -> ID;
+    // - forwarding WB -> store-data en MEM.
     // =========================================================
 
     wb_stage wb_stage_inst (
@@ -494,7 +601,7 @@ module pipeline_core (
 
 
     // =========================================================
-    // PRODUCTORES VÁLIDOS PARA FORWARDING
+    // PRODUCTORES VÁLIDOS PARA FORWARDING HACIA EX
     // =========================================================
 
     // ---------------------------------------------------------
@@ -512,13 +619,13 @@ module pipeline_core (
     //
     // todavía NO contiene el dato cargado.
     //
-    // El load-use hazard será tratado mediante stall en el
-    // siguiente paso.
+    // Si una instrucción inmediatamente posterior necesita
+    // ese dato en EX, Hazard Detection Unit inserta un stall.
     // ---------------------------------------------------------
 
     assign ex_mem_forward_reg_write =
-        ex_mem_valid      &&
-        ex_mem_reg_write  &&
+        ex_mem_valid     &&
+        ex_mem_reg_write &&
         !ex_mem_mem_read;
 
 
@@ -529,12 +636,12 @@ module pipeline_core (
     // ---------------------------------------------------------
 
     assign mem_wb_forward_reg_write =
-        mem_wb_valid      &&
+        mem_wb_valid     &&
         mem_wb_reg_write;
 
 
     // =========================================================
-    // FORWARDING UNIT
+    // FORWARDING UNIT HACIA EX
     //
     // Compara:
     //
@@ -548,6 +655,9 @@ module pipeline_core (
     // Prioridad:
     //
     // EX/MEM > MEM/WB > ID/EX
+    //
+    // Este forwarding es distinto del WB -> MEM forwarding
+    // utilizado específicamente para el dato de stores.
     // =========================================================
 
     forwarding_unit forwarding_unit_inst (

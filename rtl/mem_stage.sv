@@ -16,6 +16,7 @@ module mem_stage #(
     input  logic [31:0] ex_mem_pc,
     input  logic [31:0] ex_mem_alu_result,
     input  logic [31:0] ex_mem_store_data,
+    input logic [4:0] ex_mem_rs2,
 
     input  logic [4:0]  ex_mem_rd,
 
@@ -46,6 +47,14 @@ module mem_stage #(
 
     input  logic        ex_mem_reg_write,
     input  logic [1:0]  ex_mem_wb_sel,
+
+    // =========================================================
+    // FORWARDING WB -> STORE DATA EN MEM
+    // =========================================================
+
+    input logic        wb_write_enable,
+    input logic [4:0]  wb_write_register,
+    input logic [31:0] wb_write_data,
 
     // =========================================================
     // DATAPATH HACIA MEM/WB
@@ -134,6 +143,34 @@ module mem_stage #(
 
     end
 
+    // =========================================================
+    // STORE DATA FORWARDING
+    //
+    // Caso principal:
+    //
+    // lw x5,0(x1)
+    // sw x5,0(x2)
+    //
+    // Cuando el store está en MEM, el load está en WB.
+    // =========================================================
+
+    logic [31:0] store_data_selected;
+    logic        store_data_forwarded;
+
+
+    store_data_forwarding_unit store_data_forwarding_inst (
+        .ex_mem_valid       (ex_mem_valid),
+        .ex_mem_mem_write   (ex_mem_mem_write),
+        .ex_mem_rs2         (ex_mem_rs2),
+        .ex_mem_store_data  (ex_mem_store_data),
+
+        .wb_write_enable    (wb_write_enable),
+        .wb_write_register  (wb_write_register),
+        .wb_write_data      (wb_write_data),
+
+        .forward_store_data (store_data_forwarded),
+        .store_data_out     (store_data_selected)
+    );
 
     // =========================================================
     // STORE UNIT
@@ -147,7 +184,7 @@ module mem_stage #(
     store_unit store_unit_inst (
         .funct3         (ex_mem_funct3),
         .address_offset (ex_mem_alu_result[1:0]),
-        .store_data     (ex_mem_store_data),
+        .store_data     (store_data_selected),
 
         .write_data     (store_write_data),
         .byte_enable    (store_byte_enable),
