@@ -45,26 +45,50 @@ module pipeline_core (
     // EX/MEM y MEM/WB continúan normalmente.
     // =========================================================
 
+    // =========================================================
+    // CONTROL GLOBAL DE STALL + REDIRECT
+    //
+    // LOAD-USE:
+    //
+    //      PC      HOLD
+    //      IF/ID   HOLD
+    //      ID/EX   BUBBLE
+    //
+    // REDIRECT:
+    //
+    //      PC      <- redirect_target
+    //      IF/ID   BUBBLE
+    //      ID/EX   BUBBLE
+    //
+    // EX/MEM NO se flushea porque contiene la propia
+    // instrucción branch/jump que produjo el redirect.
+    // =========================================================
+
     assign if_enable = !load_use_stall;
 
-    // ID/EX NO se congela.
-    // Necesitamos permitir que flush inserte la burbuja.
-    assign id_enable = 1'b1;
-
+    assign id_enable  = 1'b1;
     assign ex_enable  = 1'b1;
     assign mem_enable = 1'b1;
 
 
-    assign flush_if_id = 1'b0;
+    // Una redirección invalida la instrucción joven en IF/ID.
+    assign flush_if_id =
+        redirect_valid;
 
-    // Stall load-use -> burbuja en ID/EX.
-    assign flush_id_ex = load_use_stall;
 
+    // Una burbuja en ID/EX puede aparecer por:
+    //
+    // - load-use stall;
+    // - control redirect.
+    assign flush_id_ex =
+        load_use_stall |
+        redirect_valid;
+
+
+    // La instrucción que está actualmente en EX debe sobrevivir.
     assign flush_ex_mem = 1'b0;
-    assign flush_mem_wb = 1'b0;
 
-    assign redirect_valid  = 1'b0;
-    assign redirect_target = 32'd0;
+    assign flush_mem_wb = 1'b0;
 
 
     // =========================================================
@@ -402,6 +426,13 @@ module pipeline_core (
 
         .ex_mem_forward_value (ex_mem_alu_result),
         .mem_wb_forward_value (wb_write_data),
+
+        // -----------------------------------------------------
+        // CONTROL HAZARDS
+        // -----------------------------------------------------
+
+        .redirect_valid       (redirect_valid),
+        .redirect_target      (redirect_target),
 
         // -----------------------------------------------------
         // Datapath EX/MEM

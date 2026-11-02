@@ -70,6 +70,13 @@ module ex_stage (
     input  logic [31:0] mem_wb_forward_value,
 
     // =========================================================
+    // CONTROL HAZARDS
+    // =========================================================
+
+    output logic        redirect_valid,
+    output logic [31:0] redirect_target,
+
+    // =========================================================
     // DATOS HACIA MEM
     // =========================================================
 
@@ -109,6 +116,22 @@ module ex_stage (
     localparam logic [1:0] FORWARD_MEM_WB = 2'b01;
     localparam logic [1:0] FORWARD_EX_MEM = 2'b10;
 
+    // =========================================================
+    // JUMP TYPE
+    // =========================================================
+
+    localparam logic [1:0] JUMP_NONE = 2'b00;
+    localparam logic [1:0] JUMP_JAL  = 2'b01;
+    localparam logic [1:0] JUMP_JALR = 2'b10;
+
+
+    // =========================================================
+    // BRANCH FUNCT3
+    // =========================================================
+
+    localparam logic [2:0] FUNCT3_BEQ = 3'b000;
+    localparam logic [2:0] FUNCT3_BNE = 3'b001;
+
 
     // =========================================================
     // VALORES DE REGISTRO DESPUÉS DE FORWARDING
@@ -134,6 +157,18 @@ module ex_stage (
     logic [31:0] alu_result;
     logic        alu_zero;
 
+    // =========================================================
+    // TARGET DE CONTROL
+    //
+    // Branch / JAL:
+    //      base = PC
+    //
+    // JALR:
+    //      base = forwarded_rs1
+    // =========================================================
+
+    logic [31:0] control_target_base;
+    logic [31:0] control_target_sum;
 
     // =========================================================
     // FORWARDING DE rs1
@@ -329,6 +364,158 @@ module ex_stage (
     // paso de control hazards.
     // =========================================================
 
+    // =========================================================
+    // CÁLCULO DEL TARGET
+    //
+    // Para JALR la base es rs1 ya corregido mediante
+    // forwarding.
+    //
+    // Para branch y JAL la base es el PC de la propia
+    // instrucción almacenado en ID/EX.
+    // =========================================================
+
+    always_comb begin
+
+        if (id_ex_jump_type == JUMP_JALR)
+            control_target_base = forwarded_rs1;
+        else
+            control_target_base = id_ex_pc;
+
+    end
+
+
+    always_comb begin
+
+        control_target_sum =
+            control_target_base + id_ex_immediate;
+
+    end
+
+
+    // =========================================================
+    // RESOLUCIÓN DE CONTROL
+    //
+    // Se resuelve completamente en EX.
+    //
+    // BEQ:
+    //      redirect si rs1 == rs2
+    //
+    // BNE:
+    //      redirect si rs1 != rs2
+    //
+    // JAL:
+    //      siempre redirect
+    //
+    // JALR:
+    //      siempre redirect
+    //      target[0] debe ser 0
+    //
+    // Para branch la ALU ya está ejecutando:
+    //
+    //      forwarded_rs1 - forwarded_rs2
+    //
+    // por lo tanto alu_zero indica igualdad.
+    // =========================================================
+
+    always_comb begin
+
+        redirect_valid  = 1'b0;
+        redirect_target = 32'd0;
+
+        if (id_ex_valid) begin
+
+            case (id_ex_jump_type)
+
+                // -------------------------------------------------
+                // JAL
+                // -------------------------------------------------
+
+                JUMP_JAL: begin
+
+                    redirect_valid  = 1'b1;
+                    redirect_target = control_target_sum;
+
+                end
+
+
+                // -------------------------------------------------
+                // JALR
+                //
+                // RISC-V exige limpiar el bit menos significativo.
+                // -------------------------------------------------
+
+                JUMP_JALR: begin
+
+                    redirect_valid = 1'b1;
+
+                    redirect_target = {
+                        control_target_sum[31:1],
+                        1'b0
+                    };
+
+                end
+
+
+                // -------------------------------------------------
+                // NO JUMP
+                //
+                // Puede tratarse de un branch.
+                // -------------------------------------------------
+
+                JUMP_NONE: begin
+
+                    if (id_ex_branch) begin
+
+                        case (id_ex_funct3)
+
+                            // BEQ
+                            FUNCT3_BEQ: begin
+
+                                if (alu_zero) begin
+
+                                    redirect_valid  = 1'b1;
+                                    redirect_target = control_target_sum;
+
+                                end
+
+                            end
+
+
+                            // BNE
+                            FUNCT3_BNE: begin
+
+                                if (!alu_zero) begin
+
+                                    redirect_valid  = 1'b1;
+                                    redirect_target = control_target_sum;
+
+                                end
+
+                            end
+
+
+                            default: begin
+                                // Branch no soportado:
+                                // no redirect.
+                            end
+
+                        endcase
+
+                    end
+
+                end
+
+
+                default: begin
+                    // jump_type reservado:
+                    // no redirect.
+                end
+
+            endcase
+
+        end
+
+    end
 
     // =========================================================
     // EX/MEM PIPELINE REGISTER
