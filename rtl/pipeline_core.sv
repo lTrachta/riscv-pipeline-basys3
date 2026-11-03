@@ -1,8 +1,13 @@
 `timescale 1ns / 1ps
 
 module pipeline_core (
-    input logic clk,
-    input logic reset
+    input  logic clk,
+    input  logic reset,
+
+    output logic running,
+    output logic draining,
+    output logic halted,
+    output logic pipeline_empty
 );
 
     // =========================================================
@@ -32,6 +37,13 @@ module pipeline_core (
     logic [31:0] redirect_target;
 
     logic load_use_stall;
+
+    // =========================================================
+    // HALT / EXECUTION CONTROL
+    // =========================================================
+
+    logic halt_in_id;
+    logic halt_accept;
 
 
     // =========================================================
@@ -64,30 +76,89 @@ module pipeline_core (
     // instrucción branch/jump que produjo el redirect.
     // =========================================================
 
-    assign if_enable = !load_use_stall;
+    // =========================================================
+    // CONTROL GLOBAL
+    //
+    // RUNNING:
+    //      funcionamiento normal.
+    //
+    // DRAINING:
+    //      no entra ninguna instrucción nueva;
+    //      las instrucciones anteriores siguen avanzando.
+    //
+    // HALTED:
+    //      pipeline vacío y ejecución finalizada.
+    // =========================================================
 
-    assign id_enable  = 1'b1;
-    assign ex_enable  = 1'b1;
-    assign mem_enable = 1'b1;
 
-
-    // Una redirección invalida la instrucción joven en IF/ID.
-    assign flush_if_id =
-        redirect_valid;
-
-
-    // Una burbuja en ID/EX puede aparecer por:
+    // ---------------------------------------------------------
+    // IF
+    //
+    // Durante RUNNING puede avanzar salvo:
     //
     // - load-use stall;
-    // - control redirect.
+    // - aceptación del HALT.
+    //
+    // halt_accept se incluye para evitar avanzar el PC en el
+    // mismo ciclo en que aceptamos la parada.
+    // ---------------------------------------------------------
+
+    assign if_enable =
+        running &&
+        !load_use_stall &&
+        !halt_accept;
+
+
+    // ---------------------------------------------------------
+    // ETAPAS POSTERIORES
+    //
+    // Durante DRAINING deben seguir avanzando.
+    //
+    // Recién una vez HALTED se congelan.
+    // ---------------------------------------------------------
+
+    assign id_enable  = !halted;
+    assign ex_enable  = !halted;
+    assign mem_enable = !halted;
+
+
+    // ---------------------------------------------------------
+    // IF/ID FLUSH
+    //
+    // Dos situaciones invalidan la instrucción joven:
+    //
+    // 1. redirect;
+    // 2. HALT aceptado.
+    // ---------------------------------------------------------
+
+    assign flush_if_id =
+        redirect_valid |
+        halt_accept;
+
+
+    // ---------------------------------------------------------
+    // ID/EX FLUSH
+    //
+    // Puede aparecer una burbuja por:
+    //
+    // - load-use stall;
+    // - redirect;
+    // - HALT aceptado.
+    //
+    // En el último caso evitamos que HALT ingrese a EX.
+    // ---------------------------------------------------------
+
     assign flush_id_ex =
         load_use_stall |
-        redirect_valid;
+        redirect_valid |
+        halt_accept;
 
 
-    // La instrucción que está actualmente en EX debe sobrevivir.
+    // La instrucción actualmente en EX es más vieja que HALT
+    // y debe poder terminar.
     assign flush_ex_mem = 1'b0;
 
+    // MEM/WB también debe poder drenarse normalmente.
     assign flush_mem_wb = 1'b0;
 
 
@@ -483,6 +554,48 @@ module pipeline_core (
     logic [6:0] mem_wb_opcode;
 
     logic mem_wb_valid;
+
+    // =========================================================
+    // PIPELINE EMPTY
+    //
+    // Esto significa únicamente que no existe ninguna
+    // instrucción válida dentro del pipeline.
+    //
+    // NO significa por sí solo que el programa haya terminado.
+    //
+    // HALTED solamente puede alcanzarse después de haber
+    // aceptado HALT y haber pasado por DRAINING.
+    // =========================================================
+
+    assign pipeline_empty =
+        !if_id_valid  &&
+        !id_ex_valid  &&
+        !ex_mem_valid &&
+        !mem_wb_valid;
+
+
+    // =========================================================
+    // EXECUTION CONTROL UNIT
+    // =========================================================
+
+    execution_control_unit execution_control_unit_inst (
+        .clk               (clk),
+        .reset             (reset),
+
+        .if_id_instruction (if_id_instruction),
+        .if_id_valid       (if_id_valid),
+
+        .redirect_valid    (redirect_valid),
+
+        .pipeline_empty    (pipeline_empty),
+
+        .running           (running),
+        .draining          (draining),
+        .halted            (halted),
+
+        .halt_in_id        (halt_in_id),
+        .halt_accept       (halt_accept)
+    );
 
 
     // =========================================================
