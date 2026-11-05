@@ -189,7 +189,7 @@ module pipeline_core (
     if_stage if_stage_inst (
         .clk               (clk),
         .reset             (reset),
-        
+
         .program_write_enable  (program_write_enable),
         .program_write_address (program_write_address),
         .program_write_data    (program_write_data),
