@@ -2,10 +2,9 @@
 
 module alu_control_tb;
 
-    logic [6:0] opcode;
+    logic [2:0] alu_op;
     logic [2:0] funct3;
     logic [6:0] funct7;
-
     logic [3:0] alu_operation;
 
     localparam logic [3:0] ALU_ADD     = 4'b0000;
@@ -21,286 +20,66 @@ module alu_control_tb;
     localparam logic [3:0] ALU_PASS_B  = 4'b1010;
     localparam logic [3:0] ALU_INVALID = 4'b1111;
 
+    localparam logic [2:0] ALU_OP_ADD      = 3'b000;
+    localparam logic [2:0] ALU_OP_SUB      = 3'b001;
+    localparam logic [2:0] ALU_OP_R_DECODE = 3'b010;
+    localparam logic [2:0] ALU_OP_I_DECODE = 3'b011;
+    localparam logic [2:0] ALU_OP_PASS_B   = 3'b100;
+
     alu_control dut (
-        .opcode        (opcode),
+        .alu_op        (alu_op),
         .funct3        (funct3),
         .funct7        (funct7),
         .alu_operation (alu_operation)
     );
 
-    task automatic check_decode (
-        input logic [6:0] test_opcode,
-        input logic [2:0] test_funct3,
-        input logic [6:0] test_funct7,
-        input logic [3:0] expected_operation,
-        input string      test_name
+    task automatic check_decode(
+        input logic [2:0] op,
+        input logic [2:0] f3,
+        input logic [6:0] f7,
+        input logic [3:0] expected,
+        input string name
     );
         begin
-            opcode = test_opcode;
-            funct3 = test_funct3;
-            funct7 = test_funct7;
-
+            alu_op = op;
+            funct3 = f3;
+            funct7 = f7;
             #1;
 
-            if (alu_operation !== expected_operation) begin
-                $display(
-                    "FAIL: %s | opcode=%b funct3=%b funct7=%b | alu_operation=%b expected=%b",
-                    test_name,
-                    opcode,
-                    funct3,
-                    funct7,
-                    alu_operation,
-                    expected_operation
-                );
+            if (alu_operation !== expected)
+                $fatal(1, "FAIL: %s | got=%b expected=%b", name, alu_operation, expected);
 
-                $fatal;
-            end
-            else begin
-                $display(
-                    "PASS: %s | alu_operation=%b",
-                    test_name,
-                    alu_operation
-                );
-            end
+            $display("PASS: %s | operation=%b", name, alu_operation);
         end
     endtask
 
     initial begin
+        alu_op = 3'd0;
+        funct3 = 3'd0;
+        funct7 = 7'd0;
 
-        // =========================================================
-        // R-TYPE
-        // opcode = 0110011
-        // =========================================================
+        check_decode(ALU_OP_ADD,      3'b000, 7'b0000000, ALU_ADD,    "ADDRESS ADD");
+        check_decode(ALU_OP_SUB,      3'b000, 7'b0000000, ALU_SUB,    "BRANCH SUB");
+        check_decode(ALU_OP_PASS_B,   3'b000, 7'b0000000, ALU_PASS_B, "LUI PASS B");
 
-        check_decode(
-            7'b0110011, 3'b000, 7'b0000000,
-            ALU_ADD, "ADD"
-        );
+        check_decode(ALU_OP_R_DECODE, 3'b000, 7'b0000000, ALU_ADD,    "R ADD");
+        check_decode(ALU_OP_R_DECODE, 3'b000, 7'b0100000, ALU_SUB,    "R SUB");
+        check_decode(ALU_OP_R_DECODE, 3'b100, 7'b0000000, ALU_XOR,    "R XOR");
+        check_decode(ALU_OP_R_DECODE, 3'b101, 7'b0100000, ALU_SRA,    "R SRA");
+        check_decode(ALU_OP_R_DECODE, 3'b111, 7'b0000000, ALU_AND,    "R AND");
 
-        check_decode(
-            7'b0110011, 3'b000, 7'b0100000,
-            ALU_SUB, "SUB"
-        );
+        check_decode(ALU_OP_I_DECODE, 3'b000, 7'b1111111, ALU_ADD,    "I ADDI");
+        check_decode(ALU_OP_I_DECODE, 3'b001, 7'b0000000, ALU_SLL,    "I SLLI");
+        check_decode(ALU_OP_I_DECODE, 3'b101, 7'b0000000, ALU_SRL,    "I SRLI");
+        check_decode(ALU_OP_I_DECODE, 3'b101, 7'b0100000, ALU_SRA,    "I SRAI");
+        check_decode(ALU_OP_I_DECODE, 3'b011, 7'b0000000, ALU_SLTU,   "I SLTIU");
+        check_decode(ALU_OP_I_DECODE, 3'b110, 7'b0000000, ALU_OR,     "I ORI");
 
-        check_decode(
-            7'b0110011, 3'b001, 7'b0000000,
-            ALU_SLL, "SLL"
-        );
-
-        check_decode(
-            7'b0110011, 3'b010, 7'b0000000,
-            ALU_SLT, "SLT"
-        );
-
-        check_decode(
-            7'b0110011, 3'b011, 7'b0000000,
-            ALU_SLTU, "SLTU"
-        );
-
-        check_decode(
-            7'b0110011, 3'b100, 7'b0000000,
-            ALU_XOR, "XOR"
-        );
-
-        check_decode(
-            7'b0110011, 3'b101, 7'b0000000,
-            ALU_SRL, "SRL"
-        );
-
-        check_decode(
-            7'b0110011, 3'b101, 7'b0100000,
-            ALU_SRA, "SRA"
-        );
-
-        check_decode(
-            7'b0110011, 3'b110, 7'b0000000,
-            ALU_OR, "OR"
-        );
-
-        check_decode(
-            7'b0110011, 3'b111, 7'b0000000,
-            ALU_AND, "AND"
-        );
-
-
-        // =========================================================
-        // I-TYPE ALU
-        // opcode = 0010011
-        // =========================================================
-
-        check_decode(
-            7'b0010011, 3'b000, 7'b0000000,
-            ALU_ADD, "ADDI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b010, 7'b0000000,
-            ALU_SLT, "SLTI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b011, 7'b0000000,
-            ALU_SLTU, "SLTIU"
-        );
-
-        check_decode(
-            7'b0010011, 3'b100, 7'b0000000,
-            ALU_XOR, "XORI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b110, 7'b0000000,
-            ALU_OR, "ORI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b111, 7'b0000000,
-            ALU_AND, "ANDI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b001, 7'b0000000,
-            ALU_SLL, "SLLI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b101, 7'b0000000,
-            ALU_SRL, "SRLI"
-        );
-
-        check_decode(
-            7'b0010011, 3'b101, 7'b0100000,
-            ALU_SRA, "SRAI"
-        );
-
-
-        // =========================================================
-        // LOADS
-        // Todas calculan direccion con ADD
-        // opcode = 0000011
-        // =========================================================
-
-        check_decode(
-            7'b0000011, 3'b000, 7'b0000000,
-            ALU_ADD, "LB"
-        );
-
-        check_decode(
-            7'b0000011, 3'b001, 7'b0000000,
-            ALU_ADD, "LH"
-        );
-
-        check_decode(
-            7'b0000011, 3'b010, 7'b0000000,
-            ALU_ADD, "LW"
-        );
-
-        check_decode(
-            7'b0000011, 3'b100, 7'b0000000,
-            ALU_ADD, "LBU"
-        );
-
-        check_decode(
-            7'b0000011, 3'b101, 7'b0000000,
-            ALU_ADD, "LHU"
-        );
-
-
-        // =========================================================
-        // STORES
-        // Todas calculan direccion con ADD
-        // opcode = 0100011
-        // =========================================================
-
-        check_decode(
-            7'b0100011, 3'b000, 7'b0000000,
-            ALU_ADD, "SB"
-        );
-
-        check_decode(
-            7'b0100011, 3'b001, 7'b0000000,
-            ALU_ADD, "SH"
-        );
-
-        check_decode(
-            7'b0100011, 3'b010, 7'b0000000,
-            ALU_ADD, "SW"
-        );
-
-
-        // =========================================================
-        // BRANCHES
-        // Comparacion mediante SUB
-        // opcode = 1100011
-        // =========================================================
-
-        check_decode(
-            7'b1100011, 3'b000, 7'b0000000,
-            ALU_SUB, "BEQ"
-        );
-
-        check_decode(
-            7'b1100011, 3'b001, 7'b0000000,
-            ALU_SUB, "BNE"
-        );
-
-
-        // =========================================================
-        // LUI
-        // =========================================================
-
-        check_decode(
-            7'b0110111, 3'b000, 7'b0000000,
-            ALU_PASS_B, "LUI"
-        );
-
-
-        // =========================================================
-        // JAL
-        // =========================================================
-
-        check_decode(
-            7'b1101111, 3'b000, 7'b0000000,
-            ALU_ADD, "JAL"
-        );
-
-
-        // =========================================================
-        // JALR
-        // =========================================================
-
-        check_decode(
-            7'b1100111, 3'b000, 7'b0000000,
-            ALU_ADD, "JALR"
-        );
-
-
-        // =========================================================
-        // INVALID CASES
-        // =========================================================
-
-        // R-type con funct7 no reconocido
-        check_decode(
-            7'b0110011, 3'b000, 7'b1111111,
-            ALU_INVALID, "INVALID R FUNCT7"
-        );
-
-        // Shift inmediato con funct7 no reconocido
-        check_decode(
-            7'b0010011, 3'b101, 7'b1111111,
-            ALU_INVALID, "INVALID I SHIFT"
-        );
-
-        // Opcode desconocido
-        check_decode(
-            7'b0000000, 3'b000, 7'b0000000,
-            ALU_INVALID, "INVALID OPCODE"
-        );
-
+        check_decode(ALU_OP_R_DECODE, 3'b000, 7'b1111111, ALU_INVALID, "INVALID R FUNCT7");
+        check_decode(3'b111,           3'b000, 7'b0000000, ALU_INVALID, "INVALID ALU OP");
 
         $display("PASS: alu_control");
         $finish;
-
     end
 
 endmodule

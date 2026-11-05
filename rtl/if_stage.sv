@@ -6,6 +6,14 @@ module if_stage #(
     input  logic        clk,
     input  logic        reset,
 
+    // =========================================================
+    // PROGRAMACIÓN DINÁMICA DE INSTRUCTION MEMORY
+    // =========================================================
+
+    input  logic        program_write_enable,
+    input  logic [31:0] program_write_address,
+    input  logic [31:0] program_write_data,
+
     input  logic        if_enable,
 
     input  logic        redirect_valid,
@@ -55,8 +63,14 @@ module if_stage #(
     instruction_memory #(
         .DEPTH(IMEM_DEPTH)
     ) imem (
-        .address     (pc_current),
-        .instruction (instruction)
+        .clk                   (clk),
+
+        .address               (pc_current),
+        .instruction           (instruction),
+
+        .program_write_enable  (program_write_enable),
+        .program_write_address (program_write_address),
+        .program_write_data    (program_write_data)
     );
 
     if_id_register if_id_reg (

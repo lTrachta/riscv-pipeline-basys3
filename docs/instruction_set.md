@@ -1,8 +1,6 @@
 # Conjunto de instrucciones soportadas
 
-Este documento describe las instrucciones RISC-V que debe soportar el procesador del TP.
-
-La tabla se utilizará como referencia para el diseño posterior del datapath y de la unidad de control.
+Este documento describe las instrucciones RISC-V soportadas por el procesador del TP.
 
 ## Formato R
 
@@ -43,21 +41,21 @@ La tabla se utilizará como referencia para el diseño posterior del datapath y 
 | lbu | I | Sí | No | Sí | Sí | Lectura | No | Lee 8 bits de memoria y completa con ceros hacia rd |
 | lhu | I | Sí | No | Sí | Sí | Lectura | No | Lee 16 bits de memoria y completa con ceros hacia rd |
 
-En las instrucciones de carga, la dirección efectiva de memoria se calcula como:
+En las instrucciones de carga:
 
+```text
 dirección = contenido(rs1) + inmediato
+```
 
-El dato leído desde memoria se escribe posteriormente en rd.
-
+El dato leído desde memoria se escribe posteriormente en `rd`.
 
 ## Formato I - JALR
 
 | Instrucción | Formato | rs1 | rs2 | rd | Inmediato | Memoria | Modifica PC | Operación |
 |---|---|---|---|---|---|---|---|---|
-| jalr | I | Sí | No | Sí | Sí | No | Sí | rd = PC + 4; salto a contenido(rs1) + inmediato |
+| jalr | I | Sí | No | Sí | Sí | No | Sí | rd = PC + 4; salto a contenido(rs1) + inmediato con bit 0 del destino en cero |
 
-JALR utiliza un registro como base para calcular la dirección de salto y guarda PC + 4 en rd.
-
+JALR utiliza un registro como base para calcular la dirección de salto y guarda `PC + 4` en `rd`.
 
 ## Formato S - Stores
 
@@ -69,16 +67,15 @@ JALR utiliza un registro como base para calcular la dirección de salto y guarda
 
 En los stores:
 
-- rs1 contiene la dirección base.
-- rs2 contiene el dato que se escribirá.
-- El inmediato es el desplazamiento.
+- `rs1` contiene la dirección base;
+- `rs2` contiene el dato que se escribirá;
+- el inmediato es el desplazamiento.
 
-La dirección efectiva se calcula como:
-
+```text
 dirección = contenido(rs1) + inmediato
+```
 
-Las instrucciones S no poseen registro destino rd.
-
+Las instrucciones S no poseen registro destino `rd`.
 
 ## Formato B - Branches
 
@@ -87,10 +84,7 @@ Las instrucciones S no poseen registro destino rd.
 | beq | B | Sí | Sí | No | Sí | No | Condicional | Si rs1 == rs2: PC = PC + inmediato; sino: PC = PC + 4 |
 | bne | B | Sí | Sí | No | Sí | No | Condicional | Si rs1 != rs2: PC = PC + inmediato; sino: PC = PC + 4 |
 
-Las instrucciones B comparan dos registros.
-
-No escriben un registro destino. Su resultado consiste en decidir cuál será la próxima dirección del PC.
-
+Las instrucciones B comparan dos registros y no escriben registro destino.
 
 ## Formato U - Inmediato superior
 
@@ -98,12 +92,7 @@ No escriben un registro destino. Su resultado consiste en decidir cuál será la
 |---|---|---|---|---|---|---|---|---|
 | lui | U | No | No | Sí | Sí | No | No | rd = inmediato << 12 |
 
-LUI utiliza un inmediato de 20 bits y lo coloca en la parte superior del valor escrito en rd.
-
 Los 12 bits inferiores del resultado quedan en cero.
-
-No necesita leer registros fuente.
-
 
 ## Formato J - Salto incondicional
 
@@ -111,10 +100,7 @@ No necesita leer registros fuente.
 |---|---|---|---|---|---|---|---|---|
 | jal | J | No | No | Sí | Sí | No | Sí | rd = PC + 4; PC = PC + inmediato |
 
-JAL realiza un salto relativo al PC y guarda en rd la dirección de retorno PC + 4.
-
-El registro rd no contiene el destino del salto.
-
+JAL realiza un salto relativo al PC y guarda en `rd` la dirección de retorno `PC + 4`.
 
 ## Resumen por formato
 
@@ -130,10 +116,28 @@ El registro rd no contiene el destino del salto.
 | J | 1 | jal |
 | **Total** | **32** | |
 
-## Nota sobre HALT
+## Extensión de diseño: HALT
 
-El enunciado también exige una instrucción HALT o mecanismo de stop.
+El conjunto exigido por el enunciado contiene 32 instrucciones. Además, el sistema requiere un mecanismo explícito de parada.
 
-HALT no forma parte de las 32 instrucciones enumeradas anteriormente y su codificación no está definida en el enunciado.
+Se adoptó como extensión propia:
 
-Su implementación y codificación se definirán posteriormente como una decisión de diseño.
+```text
+HALT = 32'h0000000B
+```
+
+HALT no se contabiliza entre las 32 instrucciones RISC-V anteriores.
+
+La instrucción se detecta en ID. Cuando un HALT válido es aceptado:
+
+1. se impide el ingreso de instrucciones nuevas;
+2. IF/ID e ID/EX son invalidados para evitar que HALT continúe como una instrucción normal;
+3. las instrucciones más antiguas que ya se encuentran en el pipeline pueden terminar;
+4. el controlador pasa de `RUNNING` a `DRAINING`;
+5. solamente cuando IF/ID, ID/EX, EX/MEM y MEM/WB están vacíos se alcanza `HALTED`.
+
+Un redirect generado por una instrucción más antigua en EX tiene prioridad sobre un HALT más joven en ID. De esta manera, un HALT ubicado en un camino incorrecto no detiene el procesador.
+
+La existencia de un pipeline vacío por sí sola no implica fin de programa. `HALTED` sólo puede alcanzarse luego de haber aceptado HALT.
+
+Si no existe un HALT alcanzable, el procesador continúa ejecutando hasta que una acción externa lo detenga o resetee.

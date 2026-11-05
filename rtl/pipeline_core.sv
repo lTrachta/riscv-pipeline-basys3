@@ -4,6 +4,19 @@ module pipeline_core (
     input  logic clk,
     input  logic reset,
 
+    // =========================================================
+    // PUERTO DE PROGRAMACIÓN DE INSTRUCTION MEMORY
+    //
+    // Este puerto NO es UART.
+    //
+    // Program Loader transforma los bytes recibidos en estas
+    // tres señales.
+    // =========================================================
+
+    input  logic        program_write_enable,
+    input  logic [31:0] program_write_address,
+    input  logic [31:0] program_write_data,
+
     output logic running,
     output logic draining,
     output logic halted,
@@ -176,6 +189,10 @@ module pipeline_core (
     if_stage if_stage_inst (
         .clk               (clk),
         .reset             (reset),
+        
+        .program_write_enable  (program_write_enable),
+        .program_write_address (program_write_address),
+        .program_write_data    (program_write_data),
 
         .if_enable         (if_enable),
 
