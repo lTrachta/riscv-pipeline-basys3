@@ -4,6 +4,8 @@ module pipeline_core (
     input  logic clk,
     input  logic reset,
 
+    input  logic cycle_enable,
+
     // =========================================================
     // PUERTO DE PROGRAMACIÓN DE INSTRUCTION MEMORY
     //
@@ -16,6 +18,12 @@ module pipeline_core (
     input  logic        program_write_enable,
     input  logic [31:0] program_write_address,
     input  logic [31:0] program_write_data,
+
+    input  logic [4:0]  debug_register_address,
+    output logic [31:0] debug_register_data,
+
+    input  logic [31:0] debug_memory_address,
+    output logic [31:0] debug_memory_data,
 
     output logic running,
     output logic draining,
@@ -117,6 +125,7 @@ module pipeline_core (
     // ---------------------------------------------------------
 
     assign if_enable =
+        cycle_enable &&
         running &&
         !load_use_stall &&
         !halt_accept;
@@ -130,9 +139,9 @@ module pipeline_core (
     // Recién una vez HALTED se congelan.
     // ---------------------------------------------------------
 
-    assign id_enable  = !halted;
-    assign ex_enable  = !halted;
-    assign mem_enable = !halted;
+    assign id_enable  = cycle_enable && !halted;
+    assign ex_enable  = cycle_enable && !halted;
+    assign mem_enable = cycle_enable && !halted;
 
 
     // ---------------------------------------------------------
@@ -273,9 +282,14 @@ module pipeline_core (
     // - forwarding WB -> store-data en MEM.
     // =========================================================
 
+    logic        wb_write_enable_raw;
     logic        wb_write_enable;
     logic [4:0]  wb_write_register;
     logic [31:0] wb_write_data;
+
+    assign wb_write_enable =
+        wb_write_enable_raw &&
+        cycle_enable;
 
 
     // =========================================================
@@ -301,6 +315,9 @@ module pipeline_core (
         .wb_write_enable     (wb_write_enable),
         .wb_write_register   (wb_write_register),
         .wb_write_data       (wb_write_data),
+
+        .debug_register_address (debug_register_address),
+        .debug_register_data    (debug_register_data),
 
         // -----------------------------------------------------
         // Datapath
@@ -598,6 +615,7 @@ module pipeline_core (
     execution_control_unit execution_control_unit_inst (
         .clk               (clk),
         .reset             (reset),
+        .enable            (cycle_enable),
 
         .if_id_instruction (if_id_instruction),
         .if_id_valid       (if_id_valid),
@@ -700,6 +718,9 @@ module pipeline_core (
         .wb_write_register   (wb_write_register),
         .wb_write_data       (wb_write_data),
 
+        .debug_memory_address (debug_memory_address),
+        .debug_memory_data    (debug_memory_data),
+
         // -----------------------------------------------------
         // Datapath MEM/WB
         // -----------------------------------------------------
@@ -755,7 +776,7 @@ module pipeline_core (
         .mem_wb_reg_write      (mem_wb_reg_write),
         .mem_wb_wb_sel         (mem_wb_wb_sel),
 
-        .wb_write_enable       (wb_write_enable),
+        .wb_write_enable       (wb_write_enable_raw),
         .wb_write_register     (wb_write_register),
         .wb_write_data         (wb_write_data)
     );

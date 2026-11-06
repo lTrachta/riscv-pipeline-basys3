@@ -12,7 +12,10 @@ module register_file (
 
     input  logic        write_enable,
     input  logic [4:0]  write_register,
-    input  logic [31:0] write_data
+    input  logic [31:0] write_data,
+
+    input  logic [4:0]  debug_read_register,
+    output logic [31:0] debug_read_data
 );
 
     logic [31:0] registers [0:31];
@@ -91,6 +94,30 @@ module register_file (
 
             read_data2 = registers[read_register2];
 
+        end
+
+    end
+
+
+    // =========================================================
+    // LECTURA DE DEBUG
+    // =========================================================
+
+    always_comb begin
+
+        if (debug_read_register == 5'd0) begin
+            debug_read_data = 32'd0;
+        end
+        else if (
+            !reset &&
+            write_enable &&
+            (write_register != 5'd0) &&
+            (write_register == debug_read_register)
+        ) begin
+            debug_read_data = write_data;
+        end
+        else begin
+            debug_read_data = registers[debug_read_register];
         end
 
     end

@@ -4,6 +4,7 @@ module execution_control_unit_tb;
 
     logic clk;
     logic reset;
+    logic enable;
 
     logic [31:0] if_id_instruction;
     logic        if_id_valid;
@@ -34,6 +35,7 @@ module execution_control_unit_tb;
     execution_control_unit dut (
         .clk               (clk),
         .reset             (reset),
+        .enable            (enable),
 
         .if_id_instruction (if_id_instruction),
         .if_id_valid       (if_id_valid),
@@ -109,6 +111,7 @@ module execution_control_unit_tb;
         tests_failed = 0;
 
         reset             = 1'b1;
+        enable            = 1'b1;
         if_id_instruction = 32'd0;
         if_id_valid       = 1'b0;
         redirect_valid    = 1'b0;

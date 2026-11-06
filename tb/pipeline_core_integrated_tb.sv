@@ -34,6 +34,7 @@ module pipeline_core_integrated_tb;
     pipeline_core dut (
         .clk            (clk),
         .reset          (reset),
+        .cycle_enable    (1'b1),
 
         .running        (running),
         .draining       (draining),

@@ -624,36 +624,52 @@ De esta manera se comprobó que la incorporación del cargador y del puerto de p
 
 ---
 
-## 17. Separación entre carga lógica y UART física
+## 17. Integración con UART
 
-En esta etapa ya se encuentra validada la lógica desde un byte recibido hasta la ejecución del programa:
+La capa de carga dinámica ya se encuentra integrada con la recepción UART.
 
-```text
-rx_byte_valid / rx_byte_data
-            |
-            v
-      Program Loader
-            |
-            v
-   Instruction Memory
-            |
-            v
-      Pipeline Core
-```
-
-Todavía queda incorporar el transporte UART físico:
+El camino validado es:
 
 ```text
-PC TX
-  |
-  v
-uart_rx
-  |
-  v
+señal UART
+     |
+     v
+   uart_rx
+     |
+     v
 rx_byte_valid / rx_byte_data
+     |
+     v
+Program Loader
+     |
+     v
+Instruction Memory
+     |
+     v
+Pipeline Core
 ```
 
-Gracias a esta separación, la futura implementación de UART podrá verificarse de manera independiente. Si `uart_rx` entrega correctamente cada byte, el resto del camino de programación ya se encuentra validado.
+El testbench:
+
+```text
+tb/uart_program_loader_tb.sv
+```
+
+transmitió un programa completo como tramas UART reales simuladas y verificó:
+
+```text
+UART bytes   : 32
+Frame errors : 0
+IMEM writes  : 4
+Load done    : 1
+Tests        : 12/12 PASS
+```
+
+La arquitectura UART completa, junto con RUN, STEP, consultas de estado y puertos de debug, se documenta en:
+
+```text
+docs/uart_communication.md
+```
 
 ---
 

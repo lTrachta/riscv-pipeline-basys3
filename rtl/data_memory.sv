@@ -11,7 +11,10 @@ module data_memory #(
     input  logic        write_enable,
     input  logic [3:0]  byte_enable,
 
-    output logic [31:0] read_data
+    output logic [31:0] read_data,
+
+    input  logic [31:0] debug_address,
+    output logic [31:0] debug_read_data
 );
 
     // Cantidad de bits necesarios para indexar DEPTH palabras.
@@ -26,6 +29,9 @@ module data_memory #(
 
     logic [INDEX_WIDTH-1:0] word_index;
     logic                   address_in_range;
+
+    logic [INDEX_WIDTH-1:0] debug_word_index;
+    logic                   debug_address_in_range;
 
 
     // ---------------------------------------------------------
@@ -50,6 +56,12 @@ module data_memory #(
 
     assign address_in_range = (address < MEMORY_SIZE_BYTES);
 
+    assign debug_word_index =
+        debug_address[INDEX_WIDTH+1:2];
+
+    assign debug_address_in_range =
+        (debug_address < MEMORY_SIZE_BYTES);
+
 
     // ---------------------------------------------------------
     // Lectura combinacional.
@@ -63,6 +75,18 @@ module data_memory #(
             read_data = memory[word_index];
         else
             read_data = 32'd0;
+    end
+
+
+    // ---------------------------------------------------------
+    // Lectura combinacional de debug.
+    // ---------------------------------------------------------
+
+    always_comb begin
+        if (debug_address_in_range)
+            debug_read_data = memory[debug_word_index];
+        else
+            debug_read_data = 32'd0;
     end
 
 

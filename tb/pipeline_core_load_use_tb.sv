@@ -30,7 +30,8 @@ module pipeline_core_load_use_tb;
 
     pipeline_core dut (
         .clk   (clk),
-        .reset (reset)
+        .reset (reset),
+        .cycle_enable (1'b1)
     );
 
 

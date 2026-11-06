@@ -5,6 +5,7 @@ module execution_control_unit #(
 ) (
     input  logic        clk,
     input  logic        reset,
+    input  logic        enable,
 
     // Instrucción actualmente en ID.
     input  logic [31:0] if_id_instruction,
@@ -78,6 +79,7 @@ module execution_control_unit #(
 
         halt_accept =
             !reset &&
+            enable &&
             (state == STATE_RUNNING) &&
             halt_in_id &&
             !redirect_valid;
@@ -137,7 +139,7 @@ module execution_control_unit #(
 
         if (reset)
             state <= STATE_RUNNING;
-        else
+        else if (enable)
             state <= next_state;
 
     end

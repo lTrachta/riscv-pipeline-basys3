@@ -56,6 +56,9 @@ module mem_stage #(
     input logic [4:0]  wb_write_register,
     input logic [31:0] wb_write_data,
 
+    input  logic [31:0] debug_memory_address,
+    output logic [31:0] debug_memory_data,
+
     // =========================================================
     // DATAPATH HACIA MEM/WB
     // =========================================================
@@ -232,9 +235,12 @@ module mem_stage #(
 
         .write_data   (store_write_data),
         .write_enable (memory_write_enable),
-        .byte_enable  (store_byte_enable),
+        .byte_enable     (store_byte_enable),
 
-        .read_data    (memory_read_data)
+        .read_data       (memory_read_data),
+
+        .debug_address   (debug_memory_address),
+        .debug_read_data (debug_memory_data)
     );
 
 

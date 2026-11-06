@@ -42,7 +42,8 @@ module pipeline_core_control_hazards_tb;
 
     pipeline_core dut (
         .clk   (clk),
-        .reset (reset)
+        .reset (reset),
+        .cycle_enable (1'b1)
     );
 
 

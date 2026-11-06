@@ -104,6 +104,7 @@ module pipeline_program_loading_tb;
     pipeline_core dut (
         .clk                   (clk),
         .reset                 (core_reset),
+        .cycle_enable    (1'b1),
 
         .program_write_enable  (imem_write_enable),
         .program_write_address (imem_write_address),

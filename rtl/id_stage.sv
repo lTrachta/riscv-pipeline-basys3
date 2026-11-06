@@ -18,6 +18,9 @@ module id_stage (
     input  logic [4:0]  wb_write_register,
     input  logic [31:0] wb_write_data,
 
+    input  logic [4:0]  debug_register_address,
+    output logic [31:0] debug_register_data,
+
     // =========================================================
     // DATAPATH HACIA EX
     // =========================================================
@@ -163,9 +166,12 @@ module id_stage (
         .read_data1     (read_data1),
         .read_data2     (read_data2),
 
-        .write_enable   (wb_write_enable),
-        .write_register (wb_write_register),
-        .write_data     (wb_write_data)
+        .write_enable        (wb_write_enable),
+        .write_register      (wb_write_register),
+        .write_data          (wb_write_data),
+
+        .debug_read_register (debug_register_address),
+        .debug_read_data     (debug_register_data)
     );
 
 

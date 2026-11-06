@@ -31,6 +31,7 @@ module pipeline_core_halt_tb;
     pipeline_core dut (
         .clk            (clk),
         .reset          (reset),
+        .cycle_enable    (1'b1),
 
         .running        (),
         .draining       (),
