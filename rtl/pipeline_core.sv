@@ -150,6 +150,32 @@ module pipeline_core (
 
     logic load_use_stall;
 
+
+    // =========================================================
+    // EFECTOS DE CONTROL HABILITADOS POR CICLO
+    //
+    // redirect_valid y load_use_stall son señales combinacionales.
+    //
+    // Pueden permanecer activas mientras el pipeline está pausado.
+    // Por lo tanto NO deben modificar registros del pipeline si
+    // cycle_enable = 0.
+    //
+    // El clock físico continúa funcionando normalmente.
+    // =========================================================
+
+    logic redirect_effective;
+    logic load_use_stall_effective;
+
+
+    assign redirect_effective =
+        cycle_enable &&
+        redirect_valid;
+
+
+    assign load_use_stall_effective =
+        cycle_enable &&
+        load_use_stall;
+
     // =========================================================
     // HALT / EXECUTION CONTROL
     // =========================================================
@@ -245,7 +271,7 @@ module pipeline_core (
     // ---------------------------------------------------------
 
     assign flush_if_id =
-        redirect_valid |
+        redirect_effective |
         halt_accept;
 
 
@@ -262,8 +288,8 @@ module pipeline_core (
     // ---------------------------------------------------------
 
     assign flush_id_ex =
-        load_use_stall |
-        redirect_valid |
+        load_use_stall_effective |
+        redirect_effective |
         halt_accept;
 
 
@@ -296,7 +322,7 @@ module pipeline_core (
 
         .if_enable         (if_enable),
 
-        .redirect_valid    (redirect_valid),
+        .redirect_valid    (redirect_effective),
         .redirect_pc       (redirect_target),
 
         .flush_if_id       (flush_if_id),
