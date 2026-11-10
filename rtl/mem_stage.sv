@@ -60,6 +60,16 @@ module mem_stage #(
     output logic [31:0] debug_memory_data,
 
     // =========================================================
+    // MONITOREO PARA DEBUG UNIT
+    //
+    // Estas señales solamente informan que ocurrió un acceso
+    // válido a Data Memory. No modifican la memoria.
+    // =========================================================
+
+    output logic        debug_memory_access_valid,
+    output logic [31:0] debug_memory_access_address,
+
+    // =========================================================
     // DATAPATH HACIA MEM/WB
     // =========================================================
 
@@ -260,6 +270,45 @@ module mem_stage #(
         .load_data      (load_data_formatted),
         .misaligned     (load_misaligned)
     );
+
+    // =========================================================
+    // ACCESO REAL A DATA MEMORY PARA DEBUG
+    //
+    // Se cuenta una dirección como utilizada únicamente cuando:
+    //
+    // - existe una instrucción válida en MEM;
+    // - el pipeline efectivamente avanza;
+    // - es un load o store válido;
+    // - la operación está alineada;
+    // - no estamos en reset.
+    //
+    // Esto evita contar repetidamente un acceso mientras el
+    // procesador está pausado entre comandos STEP.
+    // =========================================================
+
+    assign debug_memory_access_address =
+        ex_mem_alu_result;
+
+
+    assign debug_memory_access_valid =
+        !reset &&
+        mem_enable &&
+        !flush_mem_wb &&
+        ex_mem_valid &&
+        !(ex_mem_mem_read && ex_mem_mem_write) &&
+        (
+            (
+                ex_mem_mem_read &&
+                load_funct3_valid &&
+                !load_misaligned
+            )
+            ||
+            (
+                ex_mem_mem_write &&
+                store_funct3_valid &&
+                !store_misaligned
+            )
+        );
 
 
     // =========================================================

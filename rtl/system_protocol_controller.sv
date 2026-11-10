@@ -29,6 +29,20 @@ module system_protocol_controller #(
     output logic [31:0] debug_memory_address,
     input  logic [31:0] debug_memory_data,
 
+    // =========================================================
+    // DEBUG SNAPSHOT
+    // =========================================================
+
+    output logic       snapshot_start,
+
+    input  logic       snapshot_busy,
+    input  logic       snapshot_done,
+
+    input  logic       snapshot_byte_valid,
+    input  logic [7:0] snapshot_byte_data,
+
+    output logic       snapshot_byte_ready,
+
     output logic        tx_byte_valid,
     output logic [7:0]  tx_byte_data,
     input  logic        tx_byte_ready,
@@ -43,6 +57,7 @@ module system_protocol_controller #(
     localparam logic [7:0] CMD_REG   = 8'h47; // 'G'
     localparam logic [7:0] CMD_MEM   = 8'h4D; // 'M'
     localparam logic [7:0] CMD_QUERY = 8'h51; // 'Q'
+    localparam logic [7:0] CMD_DEBUG = 8'h44; // 'D'
 
     localparam logic [7:0] RESP_ACK   = 8'h06;
     localparam logic [7:0] RESP_NACK  = 8'h15;
@@ -63,7 +78,7 @@ module system_protocol_controller #(
     localparam logic [2:0] STATUS_HALTED   = 3'd4;
     localparam logic [2:0] STATUS_ERROR    = 3'd5;
 
-    typedef enum logic [2:0] {
+    typedef enum logic [3:0] {
         STATE_WAIT_COMMAND,
         STATE_LOAD_MODE,
         STATE_WAIT_REGISTER,
@@ -71,7 +86,8 @@ module system_protocol_controller #(
         STATE_WAIT_MEMORY_HI,
         STATE_WAIT_MEMORY_LO,
         STATE_MEMORY_CAPTURE,
-        STATE_STEP_EXECUTE
+        STATE_STEP_EXECUTE,
+        STATE_DEBUG_SNAPSHOT
     } protocol_state_t;
 
     protocol_state_t state;
@@ -87,13 +103,54 @@ module system_protocol_controller #(
 
     integer i;
 
-    always_comb begin
-        tx_byte_valid = response_active;
+    // =========================================================
+    // SALIDA HACIA UART TX
+    //
+    // Normalmente se transmiten respuestas del protocolo.
+    //
+    // Durante STATE_DEBUG_SNAPSHOT, el stream queda directamente
+    // conectado a Debug Unit.
+    // =========================================================
 
-        if (response_active)
-            tx_byte_data = response_buffer[response_index];
-        else
-            tx_byte_data = 8'd0;
+    always_comb begin
+
+        tx_byte_valid =
+            1'b0;
+
+        tx_byte_data =
+            8'd0;
+
+        snapshot_byte_ready =
+            1'b0;
+
+
+        if (
+            state ==
+            STATE_DEBUG_SNAPSHOT
+        ) begin
+
+            tx_byte_valid =
+                snapshot_byte_valid;
+
+            tx_byte_data =
+                snapshot_byte_data;
+
+            snapshot_byte_ready =
+                tx_byte_ready;
+
+        end
+        else if (response_active) begin
+
+            tx_byte_valid =
+                1'b1;
+
+            tx_byte_data =
+                response_buffer[
+                    response_index
+                ];
+
+        end
+
     end
 
     always_comb begin
@@ -142,6 +199,8 @@ module system_protocol_controller #(
 
             state <= STATE_WAIT_COMMAND;
 
+            snapshot_start <= 1'b0;
+
             run_active     <= 1'b0;
             program_loaded <= 1'b0;
 
@@ -160,6 +219,9 @@ module system_protocol_controller #(
 
         end
         else begin
+
+            // snapshot_start siempre es un pulso de un ciclo.
+            snapshot_start <= 1'b0;
 
             if (core_halted)
                 run_active <= 1'b0;
@@ -252,6 +314,42 @@ module system_protocol_controller #(
                                     response_length <= 3'd2;
                                     response_index  <= 3'd0;
                                     response_active <= 1'b1;
+                                end
+
+                                // -----------------------------
+                                // DEBUG SNAPSHOT
+                                // -----------------------------
+
+                                CMD_DEBUG: begin
+
+                                    if (!snapshot_busy) begin
+
+                                        snapshot_start <=
+                                            1'b1;
+
+                                        state <=
+                                            STATE_DEBUG_SNAPSHOT;
+
+                                    end
+                                    else begin
+
+                                        response_buffer[0] <=
+                                            RESP_NACK;
+
+                                        response_buffer[1] <=
+                                            ERR_INVALID_STATE;
+
+                                        response_length <=
+                                            3'd2;
+
+                                        response_index <=
+                                            3'd0;
+
+                                        response_active <=
+                                            1'b1;
+
+                                    end
+
                                 end
 
                                 default: begin
@@ -401,6 +499,27 @@ module system_protocol_controller #(
 
                         state <= STATE_WAIT_COMMAND;
                     end
+                end
+
+                // =============================================
+                // DEBUG SNAPSHOT
+                //
+                // Debug Unit controla el stream de bytes.
+                //
+                // El core permanece detenido porque:
+                // run_active = 0
+                // state != STATE_STEP_EXECUTE
+                // =============================================
+
+                STATE_DEBUG_SNAPSHOT: begin
+
+                    if (snapshot_done) begin
+
+                        state <=
+                            STATE_WAIT_COMMAND;
+
+                    end
+
                 end
 
                 default: begin

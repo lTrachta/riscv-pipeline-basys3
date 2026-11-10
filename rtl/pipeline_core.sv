@@ -25,6 +25,97 @@ module pipeline_core (
     input  logic [31:0] debug_memory_address,
     output logic [31:0] debug_memory_data,
 
+    // =========================================================
+    // OBSERVACIÓN PARA DEBUG UNIT
+    //
+    // Todas estas señales son solamente de salida.
+    // La Debug Unit puede observar el pipeline pero no modificarlo.
+    // =========================================================
+
+    // IF
+
+    output logic [31:0] debug_if_pc_current,
+
+
+    // IF / ID
+
+    output logic        debug_if_id_valid,
+    output logic [31:0] debug_if_id_pc,
+    output logic [31:0] debug_if_id_instruction,
+
+
+    // ID / EX
+
+    output logic        debug_id_ex_valid,
+
+    output logic [31:0] debug_id_ex_pc,
+    output logic [31:0] debug_id_ex_read_data1,
+    output logic [31:0] debug_id_ex_read_data2,
+    output logic [31:0] debug_id_ex_immediate,
+
+    output logic [4:0]  debug_id_ex_rs1,
+    output logic [4:0]  debug_id_ex_rs2,
+    output logic [4:0]  debug_id_ex_rd,
+
+    output logic [6:0]  debug_id_ex_opcode,
+    output logic [2:0]  debug_id_ex_funct3,
+    output logic [6:0]  debug_id_ex_funct7,
+
+    output logic        debug_id_ex_alu_src_a,
+    output logic        debug_id_ex_alu_src_b,
+    output logic [2:0]  debug_id_ex_alu_op,
+
+    output logic        debug_id_ex_branch,
+    output logic [1:0]  debug_id_ex_jump_type,
+
+    output logic        debug_id_ex_mem_read,
+    output logic        debug_id_ex_mem_write,
+
+    output logic        debug_id_ex_reg_write,
+    output logic [1:0]  debug_id_ex_wb_sel,
+
+
+    // EX / MEM
+
+    output logic        debug_ex_mem_valid,
+
+    output logic [31:0] debug_ex_mem_pc,
+    output logic [31:0] debug_ex_mem_alu_result,
+    output logic [31:0] debug_ex_mem_store_data,
+
+    output logic [4:0]  debug_ex_mem_rs2,
+    output logic [4:0]  debug_ex_mem_rd,
+
+    output logic [6:0]  debug_ex_mem_opcode,
+    output logic [2:0]  debug_ex_mem_funct3,
+
+    output logic        debug_ex_mem_mem_read,
+    output logic        debug_ex_mem_mem_write,
+
+    output logic        debug_ex_mem_reg_write,
+    output logic [1:0]  debug_ex_mem_wb_sel,
+
+
+    // MEM / WB
+
+    output logic        debug_mem_wb_valid,
+
+    output logic [31:0] debug_mem_wb_pc,
+    output logic [31:0] debug_mem_wb_alu_result,
+    output logic [31:0] debug_mem_wb_load_data,
+
+    output logic [4:0]  debug_mem_wb_rd,
+    output logic [6:0]  debug_mem_wb_opcode,
+
+    output logic        debug_mem_wb_reg_write,
+    output logic [1:0]  debug_mem_wb_wb_sel,
+
+
+    // Acceso real a Data Memory.
+
+    output logic        debug_memory_access_valid,
+    output logic [31:0] debug_memory_access_address,
+
     output logic running,
     output logic draining,
     output logic halted,
@@ -721,6 +812,14 @@ module pipeline_core (
         .debug_memory_address (debug_memory_address),
         .debug_memory_data    (debug_memory_data),
 
+        .debug_memory_access_valid (
+            debug_memory_access_valid
+        ),
+
+        .debug_memory_access_address (
+            debug_memory_access_address
+        ),
+
         // -----------------------------------------------------
         // Datapath MEM/WB
         // -----------------------------------------------------
@@ -855,5 +954,181 @@ module pipeline_core (
         .forward_a        (forward_a),
         .forward_b        (forward_b)
     );
+
+    // =========================================================
+    // DEBUG OBSERVATION PORTS
+    //
+    // Son copias exclusivamente de lectura de las señales
+    // internas del pipeline.
+    // =========================================================
+
+
+    // ---------------------------------------------------------
+    // IF
+    // ---------------------------------------------------------
+
+    assign debug_if_pc_current =
+        if_pc_current;
+
+
+    // ---------------------------------------------------------
+    // IF / ID
+    // ---------------------------------------------------------
+
+    assign debug_if_id_valid =
+        if_id_valid;
+
+    assign debug_if_id_pc =
+        if_id_pc;
+
+    assign debug_if_id_instruction =
+        if_id_instruction;
+
+
+    // ---------------------------------------------------------
+    // ID / EX
+    // ---------------------------------------------------------
+
+    assign debug_id_ex_valid =
+        id_ex_valid;
+
+    assign debug_id_ex_pc =
+        id_ex_pc;
+
+    assign debug_id_ex_read_data1 =
+        id_ex_read_data1;
+
+    assign debug_id_ex_read_data2 =
+        id_ex_read_data2;
+
+    assign debug_id_ex_immediate =
+        id_ex_immediate;
+
+
+    assign debug_id_ex_rs1 =
+        id_ex_rs1;
+
+    assign debug_id_ex_rs2 =
+        id_ex_rs2;
+
+    assign debug_id_ex_rd =
+        id_ex_rd;
+
+
+    assign debug_id_ex_opcode =
+        id_ex_opcode;
+
+    assign debug_id_ex_funct3 =
+        id_ex_funct3;
+
+    assign debug_id_ex_funct7 =
+        id_ex_funct7;
+
+
+    assign debug_id_ex_alu_src_a =
+        id_ex_alu_src_a;
+
+    assign debug_id_ex_alu_src_b =
+        id_ex_alu_src_b;
+
+    assign debug_id_ex_alu_op =
+        id_ex_alu_op;
+
+
+    assign debug_id_ex_branch =
+        id_ex_branch;
+
+    assign debug_id_ex_jump_type =
+        id_ex_jump_type;
+
+
+    assign debug_id_ex_mem_read =
+        id_ex_mem_read;
+
+    assign debug_id_ex_mem_write =
+        id_ex_mem_write;
+
+
+    assign debug_id_ex_reg_write =
+        id_ex_reg_write;
+
+    assign debug_id_ex_wb_sel =
+        id_ex_wb_sel;
+
+
+    // ---------------------------------------------------------
+    // EX / MEM
+    // ---------------------------------------------------------
+
+    assign debug_ex_mem_valid =
+        ex_mem_valid;
+
+    assign debug_ex_mem_pc =
+        ex_mem_pc;
+
+    assign debug_ex_mem_alu_result =
+        ex_mem_alu_result;
+
+    assign debug_ex_mem_store_data =
+        ex_mem_store_data;
+
+
+    assign debug_ex_mem_rs2 =
+        ex_mem_rs2;
+
+    assign debug_ex_mem_rd =
+        ex_mem_rd;
+
+
+    assign debug_ex_mem_opcode =
+        ex_mem_opcode;
+
+    assign debug_ex_mem_funct3 =
+        ex_mem_funct3;
+
+
+    assign debug_ex_mem_mem_read =
+        ex_mem_mem_read;
+
+    assign debug_ex_mem_mem_write =
+        ex_mem_mem_write;
+
+
+    assign debug_ex_mem_reg_write =
+        ex_mem_reg_write;
+
+    assign debug_ex_mem_wb_sel =
+        ex_mem_wb_sel;
+
+
+    // ---------------------------------------------------------
+    // MEM / WB
+    // ---------------------------------------------------------
+
+    assign debug_mem_wb_valid =
+        mem_wb_valid;
+
+    assign debug_mem_wb_pc =
+        mem_wb_pc;
+
+    assign debug_mem_wb_alu_result =
+        mem_wb_alu_result;
+
+    assign debug_mem_wb_load_data =
+        mem_wb_load_data;
+
+
+    assign debug_mem_wb_rd =
+        mem_wb_rd;
+
+    assign debug_mem_wb_opcode =
+        mem_wb_opcode;
+
+
+    assign debug_mem_wb_reg_write =
+        mem_wb_reg_write;
+
+    assign debug_mem_wb_wb_sel =
+        mem_wb_wb_sel;
 
 endmodule
