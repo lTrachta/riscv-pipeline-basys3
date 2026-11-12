@@ -26,4 +26,3 @@ jalr_target:
     addi x5, x2, 1
 
     HALT
-

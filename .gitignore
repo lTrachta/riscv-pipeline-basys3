@@ -29,3 +29,5 @@ webtalk*.log
 # Se versiona solamente la configuracion fuente .xci.
 ip/clk_wiz_0/*
 !ip/clk_wiz_0/clk_wiz_0.xci
+# Vivado GUI
+vivado_pid*.str

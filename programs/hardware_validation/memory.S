@@ -9,4 +9,3 @@ _start:
     lw   x3, 0(x1)
 
     HALT
-
