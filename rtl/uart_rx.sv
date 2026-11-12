@@ -35,7 +35,10 @@ module uart_rx #(
     // rx proviene del exterior y es asíncrono respecto de clk.
     // ---------------------------------------------------------
 
+    (* ASYNC_REG = "TRUE" *)
     logic rx_meta;
+
+    (* ASYNC_REG = "TRUE" *)
     logic rx_sync;
 
     always_ff @(posedge clk) begin
