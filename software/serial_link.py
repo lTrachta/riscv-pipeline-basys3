@@ -2,9 +2,14 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from pathlib import Path
 
 from .transport import ByteTransport, TransportError
 
+
+VIRTUAL_UART_DEVICE = Path(
+    "/tmp/riscv_pipeline_uart"
+)
 
 class SerialLinkError(TransportError):
     """Error de conexión, lectura o escritura serie."""
@@ -64,22 +69,59 @@ class SerialLink(ByteTransport):
 
     @staticmethod
     def list_ports() -> list[SerialPortInfo]:
+
         try:
-            from serial.tools import list_ports
+
+            from serial.tools import (
+                list_ports,
+            )
+
         except ImportError as exc:
+
             raise SerialLinkError(
-                "pySerial no está instalado. Ejecutá: pip install pyserial"
+                "pySerial no está instalado. "
+                "Ejecutá: pip install pyserial"
             ) from exc
 
         ports = [
             SerialPortInfo(
                 device=port.device,
-                description=port.description or "",
+                description=(
+                    port.description
+                    or ""
+                ),
             )
-            for port in list_ports.comports()
+            for port
+            in list_ports.comports()
         ]
 
-        return sorted(ports, key=lambda item: item.device)
+        devices = {
+            port.device
+            for port in ports
+        }
+
+        if (
+            VIRTUAL_UART_DEVICE.exists()
+            and str(
+                VIRTUAL_UART_DEVICE
+            ) not in devices
+        ):
+
+            ports.append(
+                SerialPortInfo(
+                    device=str(
+                        VIRTUAL_UART_DEVICE
+                    ),
+                    description=(
+                        "UART virtual XSim"
+                    ),
+                )
+            )
+
+        return sorted(
+            ports,
+            key=lambda item: item.device,
+        )
 
     def write(self, data: bytes) -> None:
         if not self.is_open:

@@ -1,4 +1,7 @@
 from __future__ import annotations
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 import types
 import unittest
@@ -44,6 +47,51 @@ class FakeSerial:
 
 
 class SerialLinkTests(unittest.TestCase):
+    def test_virtual_uart_is_listed_when_active(
+        self,
+    ) -> None:
+
+        with TemporaryDirectory() as directory:
+
+            virtual_port = (
+                Path(directory)
+                / "riscv_pipeline_uart"
+            )
+
+            virtual_port.touch()
+
+            with (
+                patch(
+                    "software.serial_link."
+                    "VIRTUAL_UART_DEVICE",
+                    virtual_port,
+                ),
+                patch(
+                    "serial.tools."
+                    "list_ports.comports",
+                    return_value=[],
+                ),
+            ):
+
+                ports = (
+                    SerialLink.list_ports()
+                )
+
+        self.assertEqual(
+            len(ports),
+            1,
+        )
+
+        self.assertEqual(
+            ports[0].device,
+            str(virtual_port),
+        )
+
+        self.assertEqual(
+            ports[0].description,
+            "UART virtual XSim",
+        )
+
     def make_link(self, incoming: bytes = b"") -> SerialLink:
         link = object.__new__(SerialLink)
         link._timeout = 0.05

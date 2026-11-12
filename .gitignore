@@ -7,3 +7,12 @@ xvlog.pb
 .venv/
 __pycache__/
 *.py[cod]
+
+# Simulacion end-to-end XSim
+simulation/build/
+simulation/.stop_virtual_uart
+
+xelab.log
+xelab.pb
+xvhdl.log
+xvhdl.pb
