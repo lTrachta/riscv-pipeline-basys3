@@ -1,0 +1,10 @@
+# Extracto del registro de Vivado Hardware Manager (Vivado 2025.1)
+# Evidencia seleccionada: detección JTAG y programación de la FPGA.
+open_hw_target
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Digilent/210183AA0DE8A
+current_hw_device [get_hw_devices xc7a35t_0]
+set_property PROGRAM.FILE {/home/luciano/Documents/TP-ARQUI/riscv-pipeline-basys3/vivado/bitstreams/riscv_pipeline_basys3.bit} [get_hw_devices xc7a35t_0]
+program_hw_devices [get_hw_devices xc7a35t_0]
+INFO: [Labtools 27-3164] End of startup status: HIGH
+refresh_hw_device [lindex [get_hw_devices xc7a35t_0] 0]
+INFO: [Labtools 27-1434] Device xc7a35t (JTAG device index = 0) is programmed with a design that has no supported debug core(s) in it.

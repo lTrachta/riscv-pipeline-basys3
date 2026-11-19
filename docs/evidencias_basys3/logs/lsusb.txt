@@ -1,0 +1,8 @@
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 002: ID 2357:011e TP-Link AC600 wireless Realtek RTL8811AU [Archer T2U Nano]
+Bus 003 Device 003: ID 5986:2156 Bison Electronics Inc. Integrated Camera
+Bus 003 Device 004: ID 0bda:4853 Realtek Semiconductor Corp. Bluetooth Radio
+Bus 003 Device 007: ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub

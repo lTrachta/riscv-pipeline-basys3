@@ -1,0 +1,99 @@
+/dev/ttyS0
+    desc: n/a
+    hwid: n/a
+/dev/ttyS1
+    desc: n/a
+    hwid: n/a
+/dev/ttyS2
+    desc: n/a
+    hwid: n/a
+/dev/ttyS3
+    desc: n/a
+    hwid: n/a
+/dev/ttyS4
+    desc: n/a
+    hwid: n/a
+/dev/ttyS5
+    desc: n/a
+    hwid: n/a
+/dev/ttyS6
+    desc: n/a
+    hwid: n/a
+/dev/ttyS7
+    desc: n/a
+    hwid: n/a
+/dev/ttyS8
+    desc: n/a
+    hwid: n/a
+/dev/ttyS9
+    desc: n/a
+    hwid: n/a
+/dev/ttyS10
+    desc: n/a
+    hwid: n/a
+/dev/ttyS11
+    desc: n/a
+    hwid: n/a
+/dev/ttyS12
+    desc: n/a
+    hwid: n/a
+/dev/ttyS13
+    desc: n/a
+    hwid: n/a
+/dev/ttyS14
+    desc: n/a
+    hwid: n/a
+/dev/ttyS15
+    desc: n/a
+    hwid: n/a
+/dev/ttyS16
+    desc: n/a
+    hwid: n/a
+/dev/ttyS17
+    desc: n/a
+    hwid: n/a
+/dev/ttyS18
+    desc: n/a
+    hwid: n/a
+/dev/ttyS19
+    desc: n/a
+    hwid: n/a
+/dev/ttyS20
+    desc: n/a
+    hwid: n/a
+/dev/ttyS21
+    desc: n/a
+    hwid: n/a
+/dev/ttyS22
+    desc: n/a
+    hwid: n/a
+/dev/ttyS23
+    desc: n/a
+    hwid: n/a
+/dev/ttyS24
+    desc: n/a
+    hwid: n/a
+/dev/ttyS25
+    desc: n/a
+    hwid: n/a
+/dev/ttyS26
+    desc: n/a
+    hwid: n/a
+/dev/ttyS27
+    desc: n/a
+    hwid: n/a
+/dev/ttyS28
+    desc: n/a
+    hwid: n/a
+/dev/ttyS29
+    desc: n/a
+    hwid: n/a
+/dev/ttyS30
+    desc: n/a
+    hwid: n/a
+/dev/ttyS31
+    desc: n/a
+    hwid: n/a
+/dev/ttyUSB1
+    desc: Digilent USB Device - Digilent USB Device
+    hwid: USB VID:PID=0403:6010 SER=210183AA0DE8 LOCATION=3-9:1.1

@@ -1,0 +1,37 @@
+Estado inicial: READY
+PASS: UART PC <-> Basys 3
+
+=== ALU ===
+PASS: READY despues de LOAD
+PASS: termina HALTED
+PASS: pipeline vacio
+PASS: x1 = 5
+PASS: x2 = 7
+PASS: x3 = 12
+
+=== MEMORIA ===
+PASS: READY despues de LOAD
+PASS: termina HALTED
+PASS: pipeline vacio
+PASS: x1 = 64
+PASS: x2 = 85
+PASS: x3 = 85
+PASS: DMEM[64] = 85
+
+=== CONTROL FLOW ===
+PASS: READY despues de LOAD
+PASS: termina HALTED
+PASS: pipeline vacio
+PASS: x1 = 0
+PASS: x2 = 6
+PASS: x3 = 24
+PASS: x4 = 0
+PASS: x5 = 7
+PASS: x6 = 41
+PASS: x7 = 36
+PASS: x8 = 0
+
+================================================================
+PASS VALIDACION FISICA BASYS 3
+PC -> USB UART -> FPGA -> pipeline -> USB UART -> PC
+================================================================
