@@ -1,0 +1,44 @@
+
+test_app_mount_and_unmount (test_app.AppTests.test_app_mount_and_unmount) ... ok
+test_does_not_shadow_textual_internal_methods (test_app.AppTests.test_does_not_shadow_textual_internal_methods) ... ok
+test_error_messages_are_classified (test_app.AppTests.test_error_messages_are_classified) ... ok
+test_pipeline_view_maps_pcs_to_source (test_app.AppTests.test_pipeline_view_maps_pcs_to_source) ... ok
+test_source_instruction_text (test_app.AppTests.test_source_instruction_text) ... ok
+test_backward_label (test_assembler.AssemblerTests.test_backward_label) ... ok
+test_basic_program (test_assembler.AssemblerTests.test_basic_program) ... ok
+test_control_flow_source_uses_real_label_addresses (test_assembler.AssemblerTests.test_control_flow_source_uses_real_label_addresses) ... ok
+test_duplicate_label (test_assembler.AssemblerTests.test_duplicate_label) ... ok
+test_empty_program (test_assembler.AssemblerTests.test_empty_program) ... ok
+test_existing_integrated_programs_match_hex (test_assembler.AssemblerTests.test_existing_integrated_programs_match_hex) ... ok
+test_forward_label (test_assembler.AssemblerTests.test_forward_label) ... ok
+test_immediate_out_of_range (test_assembler.AssemblerTests.test_immediate_out_of_range) ... ok
+test_invalid_register (test_assembler.AssemblerTests.test_invalid_register) ... ok
+test_program_too_large (test_assembler.AssemblerTests.test_program_too_large) ... ok
+test_unsupported_instruction (test_assembler.AssemblerTests.test_unsupported_instruction) ... ok
+test_word_and_halt (test_assembler.AssemblerTests.test_word_and_halt) ... ok
+test_complete_software_flow (test_end_to_end.SoftwareEndToEndTests.test_complete_software_flow) ... ok
+test_load_program_generates_expected_frame (test_protocol.ProtocolTests.test_load_program_generates_expected_frame) ... ok
+test_nack (test_protocol.ProtocolTests.test_nack) ... ok
+test_query_state (test_protocol.ProtocolTests.test_query_state) ... ok
+test_read_memory (test_protocol.ProtocolTests.test_read_memory) ... ok
+test_read_register (test_protocol.ProtocolTests.test_read_register) ... ok
+test_run_and_snapshot (test_protocol.ProtocolTests.test_run_and_snapshot) ... ok
+test_snapshot (test_protocol.ProtocolTests.test_snapshot) ... ok
+test_step_and_run (test_protocol.ProtocolTests.test_step_and_run) ... ok
+test_close (test_serial_link.SerialLinkTests.test_close) ... ok
+test_read_exact_accumulates_partial_reads (test_serial_link.SerialLinkTests.test_read_exact_accumulates_partial_reads) ... ok
+test_timeout (test_serial_link.SerialLinkTests.test_timeout) ... ok
+test_virtual_uart_is_listed_when_active (test_serial_link.SerialLinkTests.test_virtual_uart_is_listed_when_active) ... ok
+test_write (test_serial_link.SerialLinkTests.test_write) ... ok
+test_dynamic_snapshot_size (test_snapshot.SnapshotTests.test_dynamic_snapshot_size) ... ok
+test_fixed_snapshot_size_without_memory (test_snapshot.SnapshotTests.test_fixed_snapshot_size_without_memory) ... ok
+test_parse_complete_snapshot (test_snapshot.SnapshotTests.test_parse_complete_snapshot) ... ok
+test_reject_extra_bytes (test_snapshot.SnapshotTests.test_reject_extra_bytes) ... ok
+test_reject_truncated_snapshot (test_snapshot.SnapshotTests.test_reject_truncated_snapshot) ... ok
+test_reject_wrong_tag (test_snapshot.SnapshotTests.test_reject_wrong_tag) ... ok
+test_reject_wrong_version (test_snapshot.SnapshotTests.test_reject_wrong_version) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 0.536s
+
+OK
