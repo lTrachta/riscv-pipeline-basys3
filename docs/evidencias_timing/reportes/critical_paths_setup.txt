@@ -1,0 +1,993 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
+| Date         : Thu Nov 19 14:29:43 2026
+| Host         : luciano-Lenovo-V15-G3-IAP running 64-bit Ubuntu 24.04.5 LTS
+| Command      : report_timing -delay_type max -max_paths 10 -path_type full_clock_expanded -file /home/luciano/Documents/TP-ARQUI/riscv-pipeline-basys3/docs/evidencias_timing/reportes/critical_paths_setup.txt
+| Design       : basys3_top
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             3.103ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[15]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.288ns  (logic 3.992ns (24.508%)  route 12.296ns (75.492%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.096ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.544ns = ( 18.456 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         2.233    15.332    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X49Y44         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[15]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.451    18.456    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X49Y44         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[15]/C
+                         clock pessimism              0.492    18.947
+                         clock uncertainty           -0.084    18.864
+    SLICE_X49Y44         FDRE (Setup_fdre_C_R)       -0.429    18.435    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[15]
+  -------------------------------------------------------------------
+                         required time                         18.435
+                         arrival time                         -15.332
+  -------------------------------------------------------------------
+                         slack                                  3.103
+
+Slack (MET) :             3.179ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[15]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.118ns  (logic 3.992ns (24.767%)  route 12.126ns (75.233%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.095ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.543ns = ( 18.457 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         2.063    15.162    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X52Y43         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[15]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.452    18.457    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X52Y43         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[15]/C
+                         clock pessimism              0.492    18.948
+                         clock uncertainty           -0.084    18.865
+    SLICE_X52Y43         FDRE (Setup_fdre_C_R)       -0.524    18.341    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[15]
+  -------------------------------------------------------------------
+                         required time                         18.341
+                         arrival time                         -15.162
+  -------------------------------------------------------------------
+                         slack                                  3.179
+
+Slack (MET) :             3.233ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[18]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.157ns  (logic 3.992ns (24.708%)  route 12.165ns (75.292%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.097ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.545ns = ( 18.455 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         2.101    15.200    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X48Y42         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[18]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.450    18.455    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X48Y42         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[18]/C
+                         clock pessimism              0.492    18.946
+                         clock uncertainty           -0.084    18.863
+    SLICE_X48Y42         FDRE (Setup_fdre_C_R)       -0.429    18.434    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[18]
+  -------------------------------------------------------------------
+                         required time                         18.434
+                         arrival time                         -15.200
+  -------------------------------------------------------------------
+                         slack                                  3.233
+
+Slack (MET) :             3.233ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[18]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.157ns  (logic 3.992ns (24.708%)  route 12.165ns (75.292%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.097ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.545ns = ( 18.455 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         2.101    15.200    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X48Y42         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[18]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.450    18.455    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X48Y42         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[18]/C
+                         clock pessimism              0.492    18.946
+                         clock uncertainty           -0.084    18.863
+    SLICE_X48Y42         FDRE (Setup_fdre_C_R)       -0.429    18.434    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[18]
+  -------------------------------------------------------------------
+                         required time                         18.434
+                         arrival time                         -15.200
+  -------------------------------------------------------------------
+                         slack                                  3.233
+
+Slack (MET) :             3.296ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[11]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        15.984ns  (logic 3.992ns (24.975%)  route 11.992ns (75.025%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.112ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.560ns = ( 18.440 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         1.929    15.028    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X50Y24         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[11]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.435    18.440    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X50Y24         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[11]/C
+                         clock pessimism              0.492    18.931
+                         clock uncertainty           -0.084    18.848
+    SLICE_X50Y24         FDRE (Setup_fdre_C_R)       -0.524    18.324    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[11]
+  -------------------------------------------------------------------
+                         required time                         18.324
+                         arrival time                         -15.028
+  -------------------------------------------------------------------
+                         slack                                  3.296
+
+Slack (MET) :             3.296ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[12]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        15.984ns  (logic 3.992ns (24.975%)  route 11.992ns (75.025%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.112ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.560ns = ( 18.440 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         1.929    15.028    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X50Y24         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[12]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.435    18.440    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X50Y24         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[12]/C
+                         clock pessimism              0.492    18.931
+                         clock uncertainty           -0.084    18.848
+    SLICE_X50Y24         FDRE (Setup_fdre_C_R)       -0.524    18.324    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[12]
+  -------------------------------------------------------------------
+                         required time                         18.324
+                         arrival time                         -15.028
+  -------------------------------------------------------------------
+                         slack                                  3.296
+
+Slack (MET) :             3.296ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[3]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        15.984ns  (logic 3.992ns (24.975%)  route 11.992ns (75.025%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.112ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.560ns = ( 18.440 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         1.929    15.028    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X50Y24         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[3]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.435    18.440    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X50Y24         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[3]/C
+                         clock pessimism              0.492    18.931
+                         clock uncertainty           -0.084    18.848
+    SLICE_X50Y24         FDRE (Setup_fdre_C_R)       -0.524    18.324    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data2_out_reg[3]
+  -------------------------------------------------------------------
+                         required time                         18.324
+                         arrival time                         -15.028
+  -------------------------------------------------------------------
+                         slack                                  3.296
+
+Slack (MET) :             3.335ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[12]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.045ns  (logic 3.992ns (24.879%)  route 12.053ns (75.121%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.107ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.555ns = ( 18.445 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         1.990    15.089    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X53Y28         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[12]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.440    18.445    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X53Y28         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[12]/C
+                         clock pessimism              0.492    18.936
+                         clock uncertainty           -0.084    18.853
+    SLICE_X53Y28         FDRE (Setup_fdre_C_R)       -0.429    18.424    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[12]
+  -------------------------------------------------------------------
+                         required time                         18.424
+                         arrival time                         -15.089
+  -------------------------------------------------------------------
+                         slack                                  3.335
+
+Slack (MET) :             3.335ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[7]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        16.045ns  (logic 3.992ns (24.879%)  route 12.053ns (75.121%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.107ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.555ns = ( 18.445 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         1.990    15.089    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X53Y28         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[7]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.440    18.445    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X53Y28         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[7]/C
+                         clock pessimism              0.492    18.936
+                         clock uncertainty           -0.084    18.853
+    SLICE_X53Y28         FDRE (Setup_fdre_C_R)       -0.429    18.424    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[7]
+  -------------------------------------------------------------------
+                         required time                         18.424
+                         arrival time                         -15.089
+  -------------------------------------------------------------------
+                         slack                                  3.335
+
+Slack (MET) :             3.419ns  (required time - arrival time)
+  Source:                 processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[0]/R
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (clk_out1_clk_wiz_0 rise@20.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        15.868ns  (logic 3.992ns (25.157%)  route 11.876ns (74.843%))
+  Logic Levels:           17  (CARRY4=4 LUT3=2 LUT4=2 LUT6=9)
+  Clock Path Skew:        -0.105ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.553ns = ( 18.447 - 20.000 )
+    Source Clock Delay      (SCD):    -0.957ns
+    Clock Pessimism Removal (CPR):    0.492ns
+  Clock Uncertainty:      0.084ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.152ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r
+    W5                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.233     2.691    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -6.961    -4.269 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -2.608    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -2.512 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.555    -0.957    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X14Y21         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y21         FDRE (Prop_fdre_C_Q)         0.478    -0.479 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[1]/Q
+                         net (fo=4, routed)           1.283     0.805    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/rs2_out_reg[4]_0[1]
+    SLICE_X31Y21         LUT6 (Prop_lut6_I3_O)        0.296     1.101 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/store_data_out[31]_i_6/O
+                         net (fo=1, routed)           0.403     1.504    processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out_reg[10]_0
+    SLICE_X31Y22         LUT6 (Prop_lut6_I4_O)        0.124     1.628 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/ex_mem_reg/store_data_out[31]_i_2/O
+                         net (fo=42, routed)          0.784     2.411    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/forward_b12_out
+    SLICE_X29Y24         LUT3 (Prop_lut3_I2_O)        0.119     2.530 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3/O
+                         net (fo=32, routed)          0.935     3.465    processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[31]_i_3_n_0
+    SLICE_X31Y31         LUT6 (Prop_lut6_I1_O)        0.332     3.797 r  processor_system_inst/pipeline_core_inst/mem_stage_inst/mem_wb_reg/store_data_out[5]_i_1/O
+                         net (fo=2, routed)           0.951     4.748    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[31]_i_2_0[1]
+    SLICE_X15Y31         LUT3 (Prop_lut3_I2_O)        0.152     4.900 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/result2_carry_i_10/O
+                         net (fo=6, routed)           0.859     5.759    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/ex_stage_inst/operand_b[5]
+    SLICE_X11Y31         LUT4 (Prop_lut4_I3_O)        0.332     6.091 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_unit/i__carry__0_i_20/O
+                         net (fo=3, routed)           0.000     6.091    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/alu_result_out[4]_i_9[1]
+    SLICE_X11Y31         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.641 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0/CO[3]
+                         net (fo=1, routed)           0.000     6.641    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__0_n_0
+    SLICE_X11Y32         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.755 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1/CO[3]
+                         net (fo=1, routed)           0.000     6.755    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__1_n_0
+    SLICE_X11Y33         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.869 r  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2/CO[3]
+                         net (fo=1, routed)           0.000     6.869    processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__2_n_0
+    SLICE_X11Y34         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     7.203 f  processor_system_inst/pipeline_core_inst/ex_stage_inst/alu_unit/result0_inferred__0/i__carry__3/O[1]
+                         net (fo=1, routed)           0.521     7.724    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/data1[17]
+    SLICE_X10Y34         LUT6 (Prop_lut6_I2_O)        0.303     8.027 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3/O
+                         net (fo=1, routed)           0.751     8.778    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_3_n_0
+    SLICE_X10Y36         LUT6 (Prop_lut6_I2_O)        0.124     8.902 f  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/alu_result_out[17]_i_1/O
+                         net (fo=2, routed)           0.888     9.790    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/funct3_out_reg[1]_0[17]
+    SLICE_X13Y38         LUT4 (Prop_lut4_I1_O)        0.124     9.914 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13/O
+                         net (fo=1, routed)           0.667    10.581    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_13_n_0
+    SLICE_X13Y38         LUT6 (Prop_lut6_I3_O)        0.124    10.705 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9/O
+                         net (fo=3, routed)           0.960    11.665    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_current[0]_i_9_n_0
+    SLICE_X11Y23         LUT6 (Prop_lut6_I5_O)        0.124    11.789 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8/O
+                         net (fo=4, routed)           0.617    12.405    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_8_n_0
+    SLICE_X15Y21         LUT6 (Prop_lut6_I4_O)        0.124    12.529 r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/pc_out[31]_i_3/O
+                         net (fo=2, routed)           0.446    12.975    processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/jump_type_out_reg[0]_rep
+    SLICE_X15Y21         LUT6 (Prop_lut6_I1_O)        0.124    13.099 r  processor_system_inst/pipeline_core_inst/if_stage_inst/if_id_reg/pc_out[31]_i_1/O
+                         net (fo=173, routed)         1.813    14.912    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/jump_type_out_reg[0]_rep_15
+    SLICE_X50Y31         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[0]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                     20.000    20.000 r
+    W5                                                0.000    20.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    20.000    clock_generator_inst/inst/clk_in1
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    21.388 r  clock_generator_inst/inst/clkin1_ibufg/O
+                         net (fo=1, routed)           1.162    22.550    clock_generator_inst/inst/clk_in1_clk_wiz_0
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -7.217    15.332 r  clock_generator_inst/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581    16.914    clock_generator_inst/inst/clk_out1_clk_wiz_0
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    17.005 r  clock_generator_inst/inst/clkout1_buf/O
+                         net (fo=3399, routed)        1.442    18.447    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/clk_out1
+    SLICE_X50Y31         FDRE                                         r  processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[0]/C
+                         clock pessimism              0.492    18.938
+                         clock uncertainty           -0.084    18.855
+    SLICE_X50Y31         FDRE (Setup_fdre_C_R)       -0.524    18.331    processor_system_inst/pipeline_core_inst/id_stage_inst/id_ex_reg/read_data1_out_reg[0]
+  -------------------------------------------------------------------
+                         required time                         18.331
+                         arrival time                         -14.912
+  -------------------------------------------------------------------
+                         slack                                  3.419

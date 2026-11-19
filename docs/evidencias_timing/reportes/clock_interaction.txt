@@ -1,0 +1,21 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
+| Date         : Thu Nov 19 14:29:44 2026
+| Host         : luciano-Lenovo-V15-G3-IAP running 64-bit Ubuntu 24.04.5 LTS
+| Command      : report_clock_interaction -file /home/luciano/Documents/TP-ARQUI/riscv-pipeline-basys3/docs/evidencias_timing/reportes/clock_interaction.txt
+| Design       : basys3_top
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Interaction Report
+
+Clock Interaction Table
+-----------------------
+
+                                        WNS                            TNS Failing  TNS Total    WNS Path         Clock-Pair           Inter-Clock
+From Clock          To Clock            Clock Edges  WNS(ns)  TNS(ns)    Endpoints    Endpoints  Requirement(ns)  Classification       Constraints
+------------------  ------------------  -----------  -------  -------  -----------  -----------  ---------------  -------------------  -----------
+clk_out1_clk_wiz_0  clk_out1_clk_wiz_0  rise - rise     3.10     0.00            0        12220            20.00  Clean                Timed
